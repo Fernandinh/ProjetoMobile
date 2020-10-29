@@ -243,4 +243,16 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:itemBackground="@color/colorAccent"
+        app:itemIconTint="@drawable/selector"
+        app:itemTextColor="@drawable/selector"
+        app:layout_constraintBottom_toBottomOf="@+id/canvas"
+        app:layout_constraintEnd_toEndOf="@+id/canvas"
+        app:layout_constraintStart_toStartOf="@+id/canvas"
+        app:menu="@menu/menu_navigation" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

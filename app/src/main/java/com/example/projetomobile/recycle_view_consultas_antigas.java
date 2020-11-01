@@ -88,7 +88,7 @@ public class recycle_view_consultas_antigas extends AppCompatActivity {
         fb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), add_consultas_antigas.class));
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
 
             }
         });

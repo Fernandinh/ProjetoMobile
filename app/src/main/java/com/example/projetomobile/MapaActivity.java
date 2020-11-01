@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -33,6 +34,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
@@ -50,8 +52,11 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
     private int MY_PERMISSION_REQUEST_CONTACTS;
     private GoogleMap mMap;
     private ImageView mInfo;
-    float DEFAULT_ZOOM = 15f;
+    private float ZOOM = 14.5f;
+    private DatabaseReference databaseReference;
+    Query queryy;
     ArrayList<MapModel> list;
+    ArrayList<String> listNomes;
     DatabaseReference dr;
     ArrayList<Marker> TpmTimeMarker = new ArrayList<>();
     ArrayList<Marker> RealTimeMarkers = new ArrayList<>();
@@ -63,6 +68,7 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mapa);
 
+        listNomes = new ArrayList<String>();
         list = new ArrayList<MapModel>();
         mSearch_Text = findViewById(R.id.input_search);
         mInfo = (ImageView) findViewById(R.id.place_info);
@@ -71,7 +77,25 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
         dr = FirebaseDatabase.getInstance().getReference();
-        countDownTimer();
+
+
+        mSearch_Text.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String location = mSearch_Text.getQuery().toString();
+                databaseReference = FirebaseDatabase.getInstance().getReference().child("Ubs");
+                queryy = databaseReference.orderByChild("Nome").equalTo(location.toUpperCase());
+
+                DadosLocal(queryy, location);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+
 
         /*mSearch_Text.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -106,6 +130,31 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
 
 
     }
+
+    private void DadosLocal(Query query, final String Lugar) {
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot: dataSnapshot.getChildren()) {
+
+                    MapModel mm = snapshot.getValue(MapModel.class);
+                    Double Latitude = mm.getLatitude();
+                    Double Longitude = mm.getLongitude();
+
+                    LatLng latLng = new LatLng(Latitude,Longitude);
+                    mMap.addMarker(new MarkerOptions().position(latLng).title(Lugar));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,20));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void countDownTimer() {
         new CountDownTimer(1000, 1000) {
 
@@ -133,8 +182,9 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getApplicationContext(),R.raw.style_map));
+        /*mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getApplicationContext(),R.raw.style_map));*/
         LatLng Manaus = new LatLng(-3.119028, -60.021732);
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Manaus, ZOOM));
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MapaActivity.this,
@@ -197,7 +247,6 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
                 }
                 RealTimeMarkers.clear();
                 RealTimeMarkers.addAll(TpmTimeMarker);
-                countDownTimer();
             }
 
             @Override
@@ -210,6 +259,7 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
         mInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Log.d(TAG, "onClick: clicked info place");
                 try {
                     if(mMarker.isInfoWindowShown())

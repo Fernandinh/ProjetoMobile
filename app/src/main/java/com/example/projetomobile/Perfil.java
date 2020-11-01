@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,20 +28,20 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class Perfil extends AppCompatActivity {
 
     private BottomNavigationView bottomNavigationView;
-    private CircleImageView profileImg;
-    private DatabaseReference databaseReference;
-    private DatabaseReference d1;
-    FirebaseAuth mAuth;
-    FirebaseDatabase database;
+
     public String email;
     private TextView Nome;
     public String UID;
     private FusedLocationProviderClient fusedLocationClient;
 
+    private CircleImageView profileImg;
+    private DatabaseReference databaseReference;
+    private DatabaseReference d1;
     DatabaseReference dr;
     FirebaseUser user;
     Query query;
-
+    FirebaseAuth mAuth;
+    FirebaseDatabase database;
     private TextView e;
 
 
@@ -51,7 +52,15 @@ public class Perfil extends AppCompatActivity {
 
         bottomNavigationView = findViewById(R.id.navigation);
         bottomNavigationView.setSelectedItemId(R.id.Perfill);
-        profileImg = findViewById(R.id.FotoPerfil);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        dr = database.getReference();
+        user = mAuth.getCurrentUser();
+
+
+        profileImg = findViewById(R.id.Foto);
         Nome = findViewById(R.id.aa);
 
         Intent intent = getIntent();
@@ -59,8 +68,14 @@ public class Perfil extends AppCompatActivity {
 
         Intent uid = getIntent();
         UID = uid.getStringExtra("UID");
+
+        e = findViewById(R.id.vacinnn);
+
+      
+
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Usuário");
         Query query = databaseReference.orderByChild("email").equalTo(user.getEmail());
+
 
 
 
@@ -92,27 +107,33 @@ public class Perfil extends AppCompatActivity {
             }
         });
 
-        private void getUserInfo(){
-            databaseReference.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                    if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0)
-                    {
-                        if(dataSnapshot.hasChild("Usuário"))
-                        {
-                            String imagem = dataSnapshot.child("imagem").getValue().toString();
-                            Picasso.get().load(imagem).into(profileImg);
-                        }
-                    }
 
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
 
-                }
-            });
         }
+    private void Colocarfotinha() {
+        databaseReference.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0)
+                {
+                    if(dataSnapshot.hasChild("Usuário"))
+                    {
+                        String imagem = dataSnapshot.child("imagem").getValue().toString();
+                        Picasso.get().load(imagem).into(profileImg);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
+
+
 }

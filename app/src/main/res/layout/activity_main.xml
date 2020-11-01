@@ -96,6 +96,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="28dp"
+                android:textAlignment="center"
                 android:background="@drawable/vacina"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -144,6 +145,7 @@
                 android:layout_marginTop="28dp"
                 android:background="@drawable/mapa"
                 android:onClick="Mapa"
+                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.41"
                 app:layout_constraintStart_toStartOf="parent"
@@ -193,8 +195,9 @@
                 android:layout_marginTop="28dp"
                 android:background="@drawable/remedio"
                 android:onClick="proximaTela"
+                android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.47"
+                app:layout_constraintHorizontal_bias="0.476"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

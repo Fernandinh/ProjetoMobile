@@ -13,26 +13,49 @@ import android.os.strictmode.WebViewMethodCalledOnWrongThreadViolation;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import Mapa.MapModel;
+import VarialvelGlobal.InfoUser;
+import de.hdodenhof.circleimageview.CircleImageView;
 import model.Medicos;
+import model.Usuario;
 
 
 public class MainActivity extends AppCompatActivity {
     public String email;
+    private TextView Nome;
+    public String UID;
     private FusedLocationProviderClient fusedLocationClient;
     private BottomNavigationView bottomNavigationView;
+    private CircleImageView profileImg;
+    private DatabaseReference databaseReference;
+    private DatabaseReference d1;
     DatabaseReference dr;
+    FirebaseUser user;
+    Query query;
+    FirebaseAuth mAuth;
+    FirebaseDatabase database;
+    private TextView e;
 
 
     @Override
@@ -41,14 +64,31 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        dr = FirebaseDatabase.getInstance().getReference();
+
+        mAuth = FirebaseAuth.getInstance();
+        database = FirebaseDatabase.getInstance();
+        dr = database.getReference();
+        user = mAuth.getCurrentUser();
+
+
+        profileImg = findViewById(R.id.FotoPerfil);
+        Nome = findViewById(R.id.aa);
 
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
 
+        Intent uid = getIntent();
+        UID = uid.getStringExtra("UID");
+
+        e = findViewById(R.id.vacinnn);
+
         bottomNavigationView = findViewById(R.id.navigation);
         bottomNavigationView.setSelectedItemId(R.id.Menuu);
 
+        databaseReference = FirebaseDatabase.getInstance().getReference().child("Usuário");
+        Query query = databaseReference.orderByChild("email").equalTo(user.getEmail());
+
+        RecuperarDados(query);
 
         bottomNavigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
             @Override
@@ -67,7 +107,59 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
 
+   public void RecuperarDados(Query query)
+    {
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for(DataSnapshot snapshot: dataSnapshot.getChildren()) {
+
+                    Usuario user = snapshot.getValue(Usuario.class);
+                    String link = user.getImagem();
+                    String nome = user.getNome();
+
+                    if (!link.isEmpty()) {
+                        Picasso.get().load(link).into(profileImg);
+                    }
+
+                    Nome.setText(nome);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(MainActivity.this, "Não foi possivel recuperar os dados", Toast.LENGTH_SHORT).show();
+
+            }
+        });
+
+    }
+
+    private void getUserinfo() {
+        databaseReference.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0)
+                {
+                    if(dataSnapshot.hasChild("Usuário"))
+                    {
+                        String imagem = dataSnapshot.child("imagem").getValue().toString();
+                        Picasso.get().load(imagem).into(profileImg);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     private void LatLongFirebase() {
@@ -111,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent menu = new Intent(this, RecycleView_Medicos.class);
         menu.putExtra("email", email);
+        menu.putExtra("UID", UID);
         startActivity(menu);
     }
 
@@ -133,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
         Intent menu = new Intent(this, RecyclerView_Consultas_Marcadas.class);
         menu.putExtra("email", email);
+        menu.putExtra("UID", UID);
         startActivity(menu);
     }
 

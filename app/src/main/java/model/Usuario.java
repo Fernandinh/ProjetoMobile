@@ -2,60 +2,70 @@ package model;
 
 public class Usuario {
 
-        public String nome;
-        public String email;
-        public String senha;
-        public String dtsnc;
-        public String cpf;
+    private String nome;
+    private String email;
+    private String imagem;
+    private String senha;
+    private String dtsnc;
+    private String cpf;
 
-        public Usuario() {
-        }
+    public Usuario() {
+    }
 
-        public Usuario(String nome, String email, String senha, String dtsnc, String cpf) {
-            this.nome = nome;
-            this.email = email;
-            this.senha = senha;
-            this.dtsnc = dtsnc;
-            this.cpf = cpf;
-        }
+    public Usuario(String nome, String email, String imagem, String senha, String dtsnc, String cpf) {
+        this.nome = nome;
+        this.email = email;
+        this.imagem = imagem;
+        this.senha = senha;
+        this.dtsnc = dtsnc;
+        this.cpf = cpf;
+    }
 
-        public String getNome() {
-            return nome;
-        }
+    public String getNome() {
+        return nome;
+    }
 
-        public void setNome(String nome) {
-            this.nome = nome;
-        }
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-        public String getEmail() {
-            return email;
-        }
+    public String getEmail() {
+        return email;
+    }
 
-        public void setEmail(String email) {
-            this.email = email;
-        }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-        public String getSenha() {
-            return senha;
-        }
+    public String getImagem() {
+        return imagem;
+    }
 
-        public void setSenha(String senha) {
-            this.senha = senha;
-        }
+    public void setImagem(String imagem) {
+        this.imagem = imagem;
+    }
 
-        public String getDtsnc() {
-            return dtsnc;
-        }
+    public String getSenha() {
+        return senha;
+    }
 
-        public void setDtsnc(String dtsnc) {
-            this.dtsnc = dtsnc;
-        }
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
 
-        public String getCpf() {
-            return cpf;
-        }
+    public String getDtsnc() {
+        return dtsnc;
+    }
 
-        public void setCpf(String cpf) {
-            this.cpf = cpf;
-        }
+    public void setDtsnc(String dtsnc) {
+        this.dtsnc = dtsnc;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
 }

@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -29,6 +31,9 @@ public class recycle_view_consultas_antigas extends AppCompatActivity {
 
     RecyclerView recview;
     DatabaseReference dr;
+    FirebaseUser user;
+    FirebaseAuth mAuth;
+    FirebaseDatabase database;
     String email;
     ArrayList<ConsultasAntigas> list;
     AdapterConsultasAntigas adapter;
@@ -41,6 +46,10 @@ public class recycle_view_consultas_antigas extends AppCompatActivity {
 
         setTitle("Consultas Finalizadas");
 
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        database = FirebaseDatabase.getInstance();
+
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
 
@@ -50,7 +59,7 @@ public class recycle_view_consultas_antigas extends AppCompatActivity {
         list= new ArrayList<ConsultasAntigas>();
 
         dr = FirebaseDatabase.getInstance().getReference().child("Consultas Finalizadas");
-        Query query = dr.orderByChild("Email").equalTo(email);
+        Query query = dr.orderByChild("Email").equalTo(user.getEmail());
 
         final ValueEventListener erro = query.addValueEventListener(new ValueEventListener() {
             @Override

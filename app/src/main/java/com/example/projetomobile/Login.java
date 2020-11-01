@@ -168,6 +168,7 @@ public class Login extends AppCompatActivity {
     public void updateUi(FirebaseUser currentUser) {
 
         Intent menu = new Intent(this, MainActivity.class);
+        menu.putExtra("UID", currentUser.getUid());
         menu.putExtra("email", currentUser.getEmail());
         startActivity(menu);
     }

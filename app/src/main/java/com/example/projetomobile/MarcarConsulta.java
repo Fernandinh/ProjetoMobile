@@ -19,6 +19,8 @@ import android.widget.TimePicker;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -46,16 +48,23 @@ public class MarcarConsulta extends AppCompatActivity {
     EditText Local;
     EditText Cpf;
     String email;
+    String UID;
     String local;
     String medico;
     String especialidade;
-    DatabaseReference dr = FirebaseDatabase.getInstance().getReference();
+    DatabaseReference dr;
+    FirebaseUser user;
+    FirebaseAuth mAuth;
+    FirebaseDatabase database;
     Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_marcar_consulta);
+
+        Intent uid = getIntent();
+        UID = uid.getStringExtra("UID");
 
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
@@ -68,6 +77,12 @@ public class MarcarConsulta extends AppCompatActivity {
 
         Intent intent3 = getIntent();
         local = intent3.getStringExtra("local");
+
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        database = FirebaseDatabase.getInstance();
+        dr = database.getReference("usuario");
+
 
 
 
@@ -83,6 +98,7 @@ public class MarcarConsulta extends AppCompatActivity {
         btnHora = findViewById(R.id.BTNhora);
         btnConsulta = findViewById(R.id.btnMarcarConsulta);
 
+        Nome.setText(email);
         Medico.setText(medico);
         Especialidade.setText(especialidade);
         Local.setText(local);
@@ -228,8 +244,8 @@ public class MarcarConsulta extends AppCompatActivity {
 
         Map<String,Object> map = new HashMap<>();
 
-        map.put("Nome", Nome.getText().toString());
-        map.put("Email", email);
+        map.put("Nome",Nome.getText().toString());
+        map.put("Email", user.getEmail());
         map.put("Medico", Medico.getText().toString());
         map.put("Especialidade", Especialidade.getText().toString());
         map.put("Data", Data.getText().toString());
@@ -244,7 +260,7 @@ public class MarcarConsulta extends AppCompatActivity {
                         Nome.setText("");
                         Medico.setText("");
                         Especialidade.setText("");
-                        Data.setText("");;
+                        Data.setText("");
                         Hora.setText("");
                         Local.setText("");
 

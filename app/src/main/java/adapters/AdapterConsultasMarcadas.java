@@ -23,8 +23,7 @@ public class AdapterConsultasMarcadas extends RecyclerView.Adapter<AdapterConsul
 
     Context context;
     List<ConsultasMarcadas> consultasMarcadas;
-    Locale id = new Locale("in", "ID");
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMMM-YYYY", id);
+
 
 
     public AdapterConsultasMarcadas(Context context, List<ConsultasMarcadas> consultasMarcadas) {

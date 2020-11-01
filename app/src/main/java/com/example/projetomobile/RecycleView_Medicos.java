@@ -38,6 +38,7 @@ public class RecycleView_Medicos extends AppCompatActivity {
     AdapterMedicos adapter;
     FloatingActionButton fb;
     String email;
+    String UID;
 
 
 
@@ -49,6 +50,9 @@ public class RecycleView_Medicos extends AppCompatActivity {
 
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
+
+        Intent uid = getIntent();
+        UID = uid.getStringExtra("UID");
 
         recview = (RecyclerView) findViewById(R.id.reciview);
         recview.setLayoutManager(new LinearLayoutManager(this));
@@ -66,7 +70,7 @@ public class RecycleView_Medicos extends AppCompatActivity {
                     Medicos r = dataSnapshotl.getValue(Medicos.class);
                     list.add(r);
                 }
-                adapter = new AdapterMedicos(RecycleView_Medicos.this, list, email);
+                adapter = new AdapterMedicos(RecycleView_Medicos.this, list, email, UID);
                 recview.setAdapter(adapter);
 
             }

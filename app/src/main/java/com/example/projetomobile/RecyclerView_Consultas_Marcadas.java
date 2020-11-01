@@ -11,6 +11,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,16 +23,22 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import VarialvelGlobal.InfoUser;
 import adapters.AdapterConsultasMarcadas;
 import model.ConsultasMarcadas;
+import model.Usuario;
 
 public class RecyclerView_Consultas_Marcadas extends AppCompatActivity {
 
     RecyclerView recview;
     DatabaseReference dr;
-    String email;
+    DatabaseReference dF;
+    FirebaseUser user;
+    FirebaseAuth mAuth;
+    FirebaseDatabase database;
     ArrayList<ConsultasMarcadas> list;
     AdapterConsultasMarcadas adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +46,9 @@ public class RecyclerView_Consultas_Marcadas extends AppCompatActivity {
         setContentView(R.layout.activity_recycler_view__consultas__marcadas);
         setTitle("Consultas Marcadas");
 
-        Intent intent = getIntent();
-        email = intent.getStringExtra("email");
-
+        mAuth = FirebaseAuth.getInstance();
+        user = mAuth.getCurrentUser();
+        database = FirebaseDatabase.getInstance();
 
         recview = (RecyclerView)findViewById(R.id.reciview);
         recview.setLayoutManager(new LinearLayoutManager(this));
@@ -50,12 +58,14 @@ public class RecyclerView_Consultas_Marcadas extends AppCompatActivity {
 
 
         dr = FirebaseDatabase.getInstance().getReference().child("Consultas Marcadas");
-        Query query = dr.orderByChild("Email").equalTo(email);
+        Query query = dr.orderByChild("Email").equalTo(user.getEmail());
+
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
+                list.clear();
                 for(DataSnapshot dataSnapshot: snapshot.getChildren())
                 {
                     ConsultasMarcadas c = dataSnapshot.getValue(ConsultasMarcadas.class);

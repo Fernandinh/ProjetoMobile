@@ -31,16 +31,19 @@ import model.Medicos;
 public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewHolder> implements Filterable {
 
     String Email;
+    String UID;
     Context context;
     ArrayList<Medicos> medicos;
     ArrayList<Medicos> list;
 
 
-    public AdapterMedicos(Context context, ArrayList<Medicos> medicos, String email) {
+    public AdapterMedicos(Context context, ArrayList<Medicos> medicos, String email, String uid) {
         this.context = context;
         this.medicos = medicos;
         list = new ArrayList<>(medicos);
         Email = email;
+        UID = uid;
+
     }
 
     @NonNull
@@ -66,6 +69,7 @@ public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewH
                 intent.putExtra("especialidade", medicos.get(position).getEspecialidade());
                 intent.putExtra("local", medicos.get(position).getHospital());
                 intent.putExtra("email", Email);
+                intent.putExtra("UID", UID);
                 context.startActivity(intent);
 
             }

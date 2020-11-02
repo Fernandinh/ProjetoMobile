@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="wrap_content" >
 
 
     <fragment
@@ -10,63 +12,49 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MapaActivity" />
+        tools:context=".MapsActivity" />
 
-    <RelativeLayout
+        android:src="@drawable/ic_magnify"/>
+
+    <SearchView
+        android:id="@+id/input_search"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:elevation="10dp"
-        android:background="@drawable/white_border"
-        android:id="@+id/reLayout">
-
-        <ImageView
-            android:id="@+id/ic_magnify"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:src="@drawable/ic_magnify"/>
-
-        <SearchView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_toRightOf="@id/ic_magnify"
-            android:layout_centerVertical="true"
-            android:textSize="15sp"
-            android:textColor="#000"
-            android:id="@+id/input_search"
-            android:background="@null"
-            android:hint="Coloque um Endereço"
-            android:imeOptions="actionSearch"/>
-
-
-    </RelativeLayout>
-
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginLeft="15dp"
+        android:background="#ffffff"
+        android:hint="Coloque um Endereço"
+        android:imeOptions="actionSearch"
+        android:textColor="#000"
+        android:textSize="15sp" />
 
     <ImageView
-        android:id="@+id/place_info"
+        android:id="@+id/lupAumentar"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_below="@+id/reLayout"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="100dp"
         android:layout_marginEnd="15dp"
         android:scaleType="centerCrop"
         android:src="@drawable/lupaumentar" />
 
     <ImageView
-        android:id="@+id/place_info2"
+        android:id="@+id/lupaDiminuir"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_below="@+id/place_info"
+        android:layout_below="@+id/lupAumentar"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="50dp"
         android:layout_marginEnd="15dp"
         android:scaleType="centerCrop"
         android:src="@drawable/lupadiminuir" />
+
+
+
+
+
+
 
 
 </RelativeLayout>

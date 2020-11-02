@@ -18,7 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/Foto"
+            android:id="@+id/FotoUser"
             android:layout_width="138dp"
             android:layout_height="117dp"
             android:layout_below="@+id/textView4"
@@ -34,7 +34,7 @@
             tools:ignore="UnknownId" />
 
         <TextView
-            android:id="@+id/aa"
+            android:id="@+id/NomeUser"
             android:layout_width="180dp"
             android:layout_height="81dp"
             android:layout_alignParentTop="true"
@@ -69,7 +69,7 @@
         app:layout_constraintGuide_begin="252dp" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/cpff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="CPF:"
@@ -101,7 +101,7 @@
         app:layout_constraintGuide_begin="105dp" />
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/cpf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="000.000.000-00"
@@ -125,7 +125,7 @@
         app:layout_constraintGuide_begin="442dp" />
 
     <TextView
-        android:id="@+id/textView10"
+        android:id="@+id/dtnscc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Nascimento:"
@@ -136,7 +136,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <TextView
-        android:id="@+id/textView11"
+        android:id="@+id/emaill"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Email:"
@@ -147,7 +147,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <TextView
-        android:id="@+id/textView12"
+        android:id="@+id/dtnsc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="00/00/0000"
@@ -157,7 +157,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
     <TextView
-        android:id="@+id/textView13"
+        android:id="@+id/email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="exemplo@gmail.com"
@@ -167,7 +167,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/perfiltela"
+        android:id="@+id/editarrr"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"

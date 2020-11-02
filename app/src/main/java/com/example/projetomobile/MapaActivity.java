@@ -5,6 +5,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -48,15 +49,14 @@ import model.Medicos;
 public class MapaActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private SearchView mSearch_Text;
-    private static final  String TAG = "MapaActivity";
-    private int MY_PERMISSION_REQUEST_CONTACTS;
+    private static final String TAG = "MapaActivity";
     private GoogleMap mMap;
-    private ImageView mInfo;
+    private ImageView LupAumentar;
+    private ImageView LupaDiminuir;
     private float ZOOM = 14.5f;
     private DatabaseReference databaseReference;
     Query queryy;
     ArrayList<MapModel> list;
-    ArrayList<String> listNomes;
     DatabaseReference dr;
     ArrayList<Marker> TpmTimeMarker = new ArrayList<>();
     ArrayList<Marker> RealTimeMarkers = new ArrayList<>();
@@ -67,14 +67,16 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mapa);
-
-        listNomes = new ArrayList<String>();
-        list = new ArrayList<MapModel>();
-        mSearch_Text = findViewById(R.id.input_search);
-        mInfo = (ImageView) findViewById(R.id.place_info);
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        list = new ArrayList<MapModel>();
+        mSearch_Text = findViewById(R.id.input_search);
+        LupAumentar = findViewById(R.id.lupAumentar);
+        LupaDiminuir = findViewById(R.id.lupaDiminuir);
+
 
         dr = FirebaseDatabase.getInstance().getReference();
 
@@ -136,15 +138,15 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
         query.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                     MapModel mm = snapshot.getValue(MapModel.class);
                     Double Latitude = mm.getLatitude();
                     Double Longitude = mm.getLongitude();
 
-                    LatLng latLng = new LatLng(Latitude,Longitude);
+                    LatLng latLng = new LatLng(Latitude, Longitude);
                     mMap.addMarker(new MarkerOptions().position(latLng).title(Lugar));
-                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,20));
+                    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 20));
                 }
             }
 
@@ -179,27 +181,16 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    @SuppressLint("MissingPermission")
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setMyLocationEnabled(true);
+        mMap.setPadding(5, 400, 5, 5);
         /*mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(getApplicationContext(),R.raw.style_map));*/
         LatLng Manaus = new LatLng(-3.119028, -60.021732);
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(Manaus, ZOOM));
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(MapaActivity.this,
-                    new String[] {Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSION_REQUEST_CONTACTS);
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        mMap.setMyLocationEnabled(true);
 
 
         dr.child("Ubs").addListenerForSingleValueEvent(new ValueEventListener() {
@@ -256,10 +247,13 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
         });
 
 
-        mInfo.setOnClickListener(new View.OnClickListener() {
+        LupAumentar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
+                mMap.animateCamera(CameraUpdateFactory.zoomBy(1));
+
+                /*
                 Log.d(TAG, "onClick: clicked info place");
                 try {
                     if(mMarker.isInfoWindowShown())
@@ -273,6 +267,15 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
                 }catch (NullPointerException e){
                     Log.e(TAG, "onClick: NullPointerException: " + e.getMessage());
                 }
+
+                 */
+            }
+        });
+
+        LupaDiminuir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mMap.animateCamera(CameraUpdateFactory.zoomBy(-1));
             }
         });
     }

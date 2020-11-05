@@ -8,17 +8,20 @@ public class Usuario {
     private String senha;
     private String dtsnc;
     private String cpf;
+    private  String uid;
 
     public Usuario() {
+
     }
 
-    public Usuario(String nome, String email, String imagem, String senha, String dtsnc, String cpf) {
+    public Usuario(String nome, String email, String imagem, String senha, String dtsnc, String cpf, String uid) {
         this.nome = nome;
         this.email = email;
         this.imagem = imagem;
         this.senha = senha;
         this.dtsnc = dtsnc;
         this.cpf = cpf;
+        this.uid = uid;
     }
 
     public String getNome() {
@@ -67,5 +70,13 @@ public class Usuario {
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 }

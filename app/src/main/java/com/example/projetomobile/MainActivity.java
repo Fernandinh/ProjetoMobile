@@ -52,16 +52,18 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference d1;
     DatabaseReference dr;
     FirebaseUser user;
-    Query query;
     FirebaseAuth mAuth;
     FirebaseDatabase database;
     private TextView e;
+    private TextView f;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -79,14 +81,15 @@ public class MainActivity extends AppCompatActivity {
 
         Intent uid = getIntent();
         UID = uid.getStringExtra("UID");
+        f = findViewById(R.id.f);
 
-        e = findViewById(R.id.vacinnn);
+
 
         bottomNavigationView = findViewById(R.id.navigation);
         bottomNavigationView.setSelectedItemId(R.id.Menuu);
 
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Usuário");
-        Query query = databaseReference.orderByChild("email").equalTo(user.getEmail());
+        Query query = databaseReference.orderByChild("uid").equalTo(user.getUid());
 
         RecuperarDados(query);
 
@@ -137,29 +140,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-    }
-
-    private void getUserinfo() {
-        databaseReference.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0)
-                {
-                    if(dataSnapshot.hasChild("Usuário"))
-                    {
-                        String imagem = dataSnapshot.child("imagem").getValue().toString();
-                        Picasso.get().load(imagem).into(profileImg);
-                    }
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
     }
 
     private void LatLongFirebase() {

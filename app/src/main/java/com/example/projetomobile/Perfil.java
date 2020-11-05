@@ -1,34 +1,28 @@
 package com.example.projetomobile;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.MediaStore;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
+import com.github.rtoshiro.util.format.SimpleMaskFormatter;
+import com.github.rtoshiro.util.format.text.MaskTextWatcher;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -45,42 +39,44 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
-import com.google.firebase.storage.StorageTaskScheduler;
-import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-
-import java.security.Key;
-import java.util.HashMap;
+import com.theartofdev.edmodo.cropper.CropImage;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import model.Usuario;
 
 public class Perfil extends AppCompatActivity {
 
+    private static final String TAG ="Perfil" ;
     private BottomNavigationView bottomNavigationView;
 
-    private TextView Email;
-    private TextView Nome;
-    private TextView Dtnsc;
-    private TextView Cpf;
+    private EditText Email;
+    private EditText Nome;
+    private EditText Senha;
+    private EditText Dtnsc;
+    private EditText Cpf;
+    private TextView Uid;
     private CircleImageView profileImg;
-    private DatabaseReference dr;
     private DatabaseReference databaseReference;
-    private FloatingActionButton fb;
-    private static final int CAMERA_REQUEST_CODE = 100;
-    private static final int STORAGE_REQUEST_CODE = 200;
-    private static final int IMAGE_PICK_GALLERY_CODE = 300;
-    private static final int IMAGE_PICK_CAMERA_CODE = 400;
-    private String cameraPermissions[];
-    private String storagePermissions[];
-    StorageReference storageReference;
-    String storagePath = "Foto de Perfil";
-    Uri image_uri;
-    String ProfilePhoto;
 
-    FirebaseUser user;
-    Query query;
-    FirebaseAuth mAuth;
+    private FloatingActionButton fb;
+    private StorageReference storageProfilePicsRef;
+    private Uri imageUri;
+    private AlertDialog myDialog;
+    private AlertDialog myDialogSenha;
+    private String myUri = "";
+    private StorageTask uploadTask;
+    private FirebaseUser user;
+    private FirebaseUser useremail;
+    private Query query;
+    private DatabaseReference dr;
+    private FirebaseAuth mAuth;
+    private String Nome_User;
+    private String Senha_User;
+    private String Cpf_User;
+    private String Nascimento_User;
+    private String Email_User;
+    private String Link_user;
 
 
     @Override
@@ -91,30 +87,48 @@ public class Perfil extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.navigation);
         bottomNavigationView.setSelectedItemId(R.id.Perfill);
 
+
+        storageProfilePicsRef = FirebaseStorage.getInstance().getReference().child("Foto de Perfil");
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
+        useremail = mAuth.getCurrentUser();
+
 
 
         Nome = findViewById(R.id.NomeUser);
+        Uid = findViewById(R.id.uid);
         Cpf = findViewById(R.id.cpf);
         Dtnsc = findViewById(R.id.dtnsc);
+        Senha = findViewById(R.id.senha);
         Email = findViewById(R.id.email);
         profileImg = findViewById(R.id.FotoUser);
         fb = findViewById(R.id.editarrr);
 
-        dr =  FirebaseDatabase.getInstance().getReference("Usuário");
-        storageReference = FirebaseStorage.getInstance().getReference();
+        /*
+        SimpleMaskFormatter smf = new SimpleMaskFormatter("NNN.NNN.NNN-NN");
+        MaskTextWatcher mtw = new MaskTextWatcher(Cpf, smf);
+        Cpf.addTextChangedListener(mtw);
 
+        SimpleMaskFormatter simpleMaskFormatter = new SimpleMaskFormatter("NN/NN/NNNN");
+        MaskTextWatcher maskTextWatcher = new MaskTextWatcher(Dtnsc, simpleMaskFormatter);
+        Dtnsc.addTextChangedListener(maskTextWatcher);
+
+         */
+
+        /*
+        DesabilitarHeditText(Nome);
+        DesabilitarHeditText(Cpf);
+        DesabilitarHeditText(Dtnsc);
+        DesabilitarHeditText(Email);
+        DesabilitarHeditText(Senha);
+
+         */
+
+
+        dr =  FirebaseDatabase.getInstance().getReference();
         databaseReference = FirebaseDatabase.getInstance().getReference().child("Usuário");
         query = databaseReference.orderByChild("email").equalTo(user.getEmail());
         RecuperarDados(query);
-
-        cameraPermissions = new String[] {Manifest.permission.CAMERA,
-        Manifest.permission.WRITE_EXTERNAL_STORAGE};
-
-        storagePermissions = new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-
-
 
 
         bottomNavigationView.setOnNavigationItemReselectedListener(new BottomNavigationView.OnNavigationItemReselectedListener() {
@@ -139,188 +153,232 @@ public class Perfil extends AppCompatActivity {
         fb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditarPerfil();
+/*
+                AlertDialog.Builder builder = new AlertDialog.Builder(Perfil.this);
+                builder.setTitle("Voce quer atualizar seu perfil?");
+
+                final EditText editText = new EditText(Perfil.this);
+                editText.setHint("Enter");
+
+
+                builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                       View view = LayoutInflater.from(Perfil.this).inflate(R.layout.dialog_update, null);
+
+                        CircleImageView FotoEditar = view.findViewById(R.id.FotoEditar);
+                        EditText Nome = view.findViewById(R.id.NomeEditar);
+                         final EditText Senha = view.findViewById(R.id.SenhaEditar);
+                         final EditText Email = view.findViewById(R.id.EmailEditar);
+                        EditText Dtnsc = view.findViewById(R.id.DtnscEditar);
+                        Button BotaoAtualizar = view.findViewById(R.id.BtnEditarr);
+
+
+                        AlertDialog.Builder Atualizar = new AlertDialog.Builder(Perfil.this);
+                        Atualizar.setView(view);
+
+                        Atualizar.create().show();
+
+
+                        BotaoAtualizar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String NovoEmail = Email.getText().toString();
+                                String NovaSenha = Senha.getText().toString();
+
+                                if(!Patterns.EMAIL_ADDRESS.matcher(NovoEmail).matches()) {
+                                    Email.setError("Email inválido");
+                                    Email.setFocusable(true);
+                                }
+
+                                if(NovaSenha.length() < 6)
+                                {
+                                    Senha.setError("A senha precisa ter no minimo 6 caracteres");
+                                    Senha.setFocusable(true);
+                                }
+
+                                /*UpdateEmaileSenha(NovoEmail,NovaSenha);
+                              UpdateEmail(NovoEmail);
+                                UpdateSenha(NovaSenha);
+                               // Update(v)
+
+
+
+
+                            }
+                        });
+
+
+                    }
+                });
+
+                builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+
+                builder.create().show();
+               */ EditarPerfil();
 
             }
         });
 
-        }
-        private  boolean checkStoragePermission()
-        {
-            boolean result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                    (PackageManager.PERMISSION_GRANTED);
-
-            return result;
-        }
-        @RequiresApi(api = Build.VERSION_CODES.M)
-        private void requestStoragePermission()
-        {
-            requestPermissions( storagePermissions, STORAGE_REQUEST_CODE);
-        }
-
-        private  boolean checkCameraPermission()
-          {
-        boolean result = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) ==
-                (PackageManager.PERMISSION_GRANTED);
-
-        boolean result1 = ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                (PackageManager.PERMISSION_GRANTED);
-
-        return result && result1;
     }
 
-        @RequiresApi(api = Build.VERSION_CODES.M)
-        private void requestCameraPermission()
-          {
-        requestPermissions( cameraPermissions, CAMERA_REQUEST_CODE);
+
+
+    private void UpdateEmail(final String NovoEmail) {
+
+
+        user.updateEmail(NovoEmail).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+
+                dr.child("Usuário").child(user.getUid()).child("email").setValue(NovoEmail);
+                Email_User = NovoEmail;
+                Toast.makeText(getApplicationContext(), "Email Atualizado", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Toast.makeText(getApplicationContext(), "Não foi possivel atualizar seu Email" +e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
+
+    private void UpdateSenha(final String NovaSenha) {
+
+        if(NovaSenha == null || NovaSenha.isEmpty() )
+        {
+            Toast.makeText(getApplicationContext(),"Sua Senha é a mesma: "+Senha_User, Toast.LENGTH_SHORT).show();
+        }
+        else
+        {
+            user.updatePassword(NovaSenha).addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+
+                    dr.child("Usuário").child(user.getUid()).child("senha").setValue(NovaSenha);
+                    Senha_User = NovaSenha;
+                    Toast.makeText(getApplicationContext(), "Senha Atualizada", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                    Toast.makeText(getApplicationContext(), "Não foi possivel atualizar sua Senha: "+e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+            });
+        }
+
+
+    }
+
 
 
     private void EditarPerfil() {
-        String opcoes[] = {"Editar Foto de Perfil",
-                "Editar Nome",
-                "Editar Cpf",
-                "Editar Data de Nascimento",
-                "Editar Email"};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+        AlertDialog.Builder myBuilder = new AlertDialog.Builder(this);
 
-        builder.setTitle("Escolha alguma opção:");
+        final CharSequence[] Opcoes = {"Editar Foto de Perfil",
+                "Editar Dados"};
 
-        builder.setItems(opcoes, new DialogInterface.OnClickListener() {
+
+        myBuilder.setItems(Opcoes, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                if( which == 0)
+            public void onClick(DialogInterface dialog, int position) {
+
+                Toast.makeText(getApplicationContext(), Opcoes[position].toString(), Toast.LENGTH_SHORT).show();
+
+
+                if( position == 0)
                 {
-                    ProfilePhoto = "image";
-                    showImageDialog();
+                    CropImage.activity().setAspectRatio(1,1).start(Perfil.this);
+
+
+
 
                 }
-                else if( which == 1)
+                else if( position == 1)
                 {
-                    showUpdateDialog("Nome");
+                    UpdateDados();
 
-                }
-                else if( which == 2)
-                {
-
-                }
-                else if( which == 3)
-                {
-
-                }
-                else if( which == 4)
-                {
 
                 }
             }
         });
 
-        builder.create().show();
+        myDialog = myBuilder.create();
+        myDialog.show();
+
     }
 
-    private void showUpdateDialog(final String key) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-        builder.setTitle("Atualizar" + key);
 
-        LinearLayout linearLayout = new LinearLayout(getApplicationContext());
-        linearLayout.setOrientation(LinearLayout.VERTICAL);
-        linearLayout.setPadding(10,10,10,10);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        final EditText editText = new EditText(getApplicationContext());
-        editText.setHint("Enter" + key);
+        super.onActivityResult(requestCode, resultCode, data);
 
-        linearLayout.addView(editText);
+        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK && data != null)
+        {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            imageUri = result.getUri();
 
-        builder.setView(linearLayout);
-
-        builder.setPositiveButton("Atualizar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String value = editText.getText().toString().trim();
-
-                if(!TextUtils.isEmpty(value))
-                {
-                   HashMap<String, Object> result = new HashMap<>();
-
-                   result.put(key, value);
-
-                   dr.child(user.getEmail()).updateChildren(result)
-                           .addOnSuccessListener(new OnSuccessListener<Void>() {
-                               @Override
-                               public void onSuccess(Void aVoid) {
-                                   Toast.makeText(getApplicationContext(), "Atualizado", Toast.LENGTH_SHORT).show();
-
-                               }
-                           }).addOnFailureListener(new OnFailureListener() {
-                       @Override
-                       public void onFailure(@NonNull Exception e) {
-
-                           Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-
-                       }
-                   });
-
-                }
-                else
-                {
-                    Toast.makeText(getApplicationContext(), "Enter" + key, Toast.LENGTH_SHORT).show();
-
-                }
-            }
-        });
-
-        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        });
-
-        builder.create().show();;
+            profileImg.setImageURI(imageUri);
+            UploadProfileImage();
+        }
+        else
+        {
+            Toast.makeText(this, "Não foi possivel adicionar a imagem", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void showImageDialog() {
-            String opcoes[] = {"Camera",
-                    "Galeria"};
+    private void UploadProfileImage() {
+        if(imageUri != null)
+        {
+            final StorageReference fileRef;
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+            fileRef = storageProfilePicsRef
+                    .child(mAuth.getCurrentUser() + ".jpg");
 
-            builder.setTitle("Escolha alguma opção:");
-
-            builder.setItems(opcoes, new DialogInterface.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.M)
+            uploadTask = fileRef.putFile(imageUri);
+            uploadTask.continueWithTask(new Continuation() {
                 @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if( which == 0)
+                public Object then(@NonNull Task task) throws Exception {
+                    if(!task.isSuccessful())
                     {
-                      if(!checkCameraPermission())
-                      {
-                          requestCameraPermission();
-                      }
-                      else
-                      {
-                          pickFromCamera();
-                      }
-
+                        throw task.getException();
                     }
-                    else if( which == 1)
+                    return fileRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task <Uri> task) {
+                    if(task.isSuccessful())
                     {
-                        if(!checkStoragePermission())
-                        {
-                            requestStoragePermission();
-                        }
-                        else
-                        {
-                            pickFromGallery();
-                        }
+                        Uri dowloadUrl = task.getResult();
+                        myUri = dowloadUrl.toString();
+
+                        dr.child("Usuário").child(user.getUid()).child("imagem").setValue(myUri);
+                        Link_user = myUri;
+                        Toast.makeText(Perfil.this, "Imagem Atualizada\n", Toast.LENGTH_SHORT).show();
+
 
                     }
                 }
             });
-
-            builder.create().show();
         }
+        else
+        {
+            Toast.makeText(Perfil.this, "Nenhuma Imagem foi selecionada", Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
     private void RecuperarDados(Query query) {
 
@@ -331,20 +389,23 @@ public class Perfil extends AppCompatActivity {
                 for(DataSnapshot snapshot: dataSnapshot.getChildren()) {
 
                     Usuario user = snapshot.getValue(Usuario.class);
-                    String link = user.getImagem();
-                    String nome = user.getNome();
-                    String cpf = user.getCpf();
-                    String dtns = user.getDtsnc();
-                    String email = user.getEmail();
+                    Link_user = user.getImagem();
+                    Nome_User = user.getNome();
+                    Cpf_User = user.getCpf();
+                    Nascimento_User = user.getDtsnc();
+                    Email_User = user.getEmail();
+                    Senha_User = user.getSenha();
 
-                    if (!link.isEmpty()) {
-                        Picasso.get().load(link).into(profileImg);
+                    if (!Link_user.isEmpty()) {
+                        Picasso.get().load(Link_user).into(profileImg);
+
                     }
-
-                    Nome.setText(nome);
-                    Email.setText(email);
-                    Cpf.setText(cpf);
-                    Dtnsc.setText(dtns);
+                    Nome.setText(Nome_User);
+                    Email.setText(Email_User);
+                    Cpf.setText(Cpf_User);
+                    Dtnsc.setText(Nascimento_User);
+                    Senha.setText(Senha_User);
+                    Uid.setText(mAuth.getCurrentUser().getUid());
                 }
             }
 
@@ -356,130 +417,114 @@ public class Perfil extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode)
-        {
-            case CAMERA_REQUEST_CODE:
-            {
-                if(grantResults.length > 0)
-                {
-                    boolean CameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+    public void UpdateDados ()
+    {
 
-                    if(CameraAccepted && writeStorageAccepted)
-                    {
-                        pickFromCamera();
-                    }
-                    else
-                    {
-                        Toast.makeText(getApplicationContext(), "Por favor, aceite as permissoes de camera e armazenamento", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-            case STORAGE_REQUEST_CODE:
-            {
-                if(grantResults.length > 0)
-                {
-                    boolean writeStorageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+        View view = LayoutInflater.from(Perfil.this).inflate(R.layout.dialog_update, null);
 
-                    if(writeStorageAccepted)
-                    {
-                        pickFromGallery();
-                    }
-                    else
-                    {
-                        Toast.makeText(getApplicationContext(), "Por favor, aceite s permissão de armazenamento", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-            }
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
+        final EditText Nome = view.findViewById(R.id.NomeEditar);
+        final EditText Senha = view.findViewById(R.id.SenhaEditar);
+        final EditText Cpf =  view.findViewById(R.id.CpfEditar);
+        final EditText Dtnsc = view.findViewById(R.id.DtnscEditar);
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if(resultCode == RESULT_OK)
-        {
-            if(requestCode == IMAGE_PICK_GALLERY_CODE)
-            {
-                image_uri = data.getData();
+        SimpleMaskFormatter smf = new SimpleMaskFormatter("NNN.NNN.NNN-NN");
+        MaskTextWatcher mtw = new MaskTextWatcher(Cpf, smf);
+        Cpf.addTextChangedListener(mtw);
 
-                uploadProfilePhoto(image_uri);
-            }
-            if(requestCode == IMAGE_PICK_CAMERA_CODE)
-            {
-                uploadProfilePhoto(image_uri);
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
+        SimpleMaskFormatter simpleMaskFormatter = new SimpleMaskFormatter("NN/NN/NNNN");
+        MaskTextWatcher maskTextWatcher = new MaskTextWatcher(Dtnsc, simpleMaskFormatter);
+        Dtnsc.addTextChangedListener(maskTextWatcher);
 
-    private void uploadProfilePhoto(final Uri uri) {
 
-        String filePathAndName = storagePath + "" + ProfilePhoto + "_" + user.getEmail();
 
-        StorageReference storageReference2nd = storageReference.child(filePathAndName);
-        storageReference2nd.putFile(uri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+        AlertDialog.Builder Atualizar = new AlertDialog.Builder(Perfil.this);
+        Atualizar.setView(view);
 
-                        while(!uriTask.isSuccessful());
-                        Uri dowloadUri = uriTask.getResult();
 
-                        if(uriTask.isSuccessful())
-                        {
-                            HashMap<String, Object> results = new HashMap<>();
 
-                            dr.child(user.getEmail()).updateChildren(results)
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Toast.makeText(getApplicationContext(), "Imagem Atualizada", Toast.LENGTH_SHORT).show();
+        Atualizar.setPositiveButton("Atualizar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                final String nome = Nome.getText().toString().trim();
+                final String email = Email.getText().toString().trim();
+                final String senha = Senha.getText().toString().trim();
+                final String cpf = Cpf.getText().toString().trim();
+                final String dtns = Dtnsc.getText().toString().trim();
 
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
+
+                if (!TextUtils.isEmpty(nome)){
+
+                    UpdateSenha(senha);
+
+
+                    dr.child("Usuário").child(user.getUid()).child("nome").setValue(nome)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(getApplicationContext(), "Erro ao Atualizar a imagem", Toast.LENGTH_SHORT).show();
+                                public void onSuccess(Void aVoid) {
+                                    Nome_User = Nome.getText().toString();
+
 
                                 }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    Toast.makeText(Perfil.this, "Não foi possivel atualizar seu nome\n", Toast.LENGTH_SHORT).show();
+                                }
                             });
-                            results.put(ProfilePhoto, dowloadUri.toString());
-                        }
-                        else
-                        {
-                            Toast.makeText(getApplicationContext(), "Ocorreu algum erro", Toast.LENGTH_SHORT).show();
 
-                        }
+                    dr.child("Usuário").child(user.getUid()).child("cpf").setValue(cpf)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Cpf_User = Cpf.getText().toString();
 
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    Toast.makeText(Perfil.this, "Erro ao atualizar seu Cpf\n", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                    dr.child("Usuário").child(user.getUid()).child("dtsnc").setValue(dtns)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Nascimento_User = Dtnsc.getText().toString();
+
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+
+                                    Toast.makeText(Perfil.this, "Não foi possivel atualizar sua Data de Nascimento\n", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                    Toast.makeText(Perfil.this, " Atualização Realizada com Sucesso !\n", Toast.LENGTH_SHORT).show();
+
+
+                }else{
+                    Toast.makeText(Perfil.this, "Por favor insira"+Nome, Toast.LENGTH_SHORT).show();
+
+                }
             }
         });
 
+        Atualizar.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+
+        Atualizar.create().show();
+
     }
 
-    private void pickFromCamera() {
-        ContentValues values = new ContentValues();
-        values.put(MediaStore.Images.Media.TITLE, "Temp Pic");
-        values.put(MediaStore.Images.Media.DESCRIPTION, "Tempo Descrição");
-
-        image_uri = getApplicationContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(cameraIntent, IMAGE_PICK_CAMERA_CODE);
-    }
-
-    private void pickFromGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK);
-        galleryIntent.setType("Image/*");
-        startActivityForResult(galleryIntent, IMAGE_PICK_GALLERY_CODE);
-    }
 }

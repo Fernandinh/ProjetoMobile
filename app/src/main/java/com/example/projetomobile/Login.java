@@ -115,8 +115,6 @@ public class Login extends AppCompatActivity {
 
     private void UserLogin(String email, String senha) {
 
-        String msg ="Iniciando a tela principal do app";
-        Toast.makeText(Login.this, msg, Toast.LENGTH_LONG).show();
 
         mAuth.signInWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -126,6 +124,8 @@ public class Login extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUi(user);
+                            String msg ="Bem Vindo";
+                            Toast.makeText(Login.this, msg, Toast.LENGTH_LONG).show();
 
 
 
@@ -146,22 +146,7 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        if(currentUser != null)
-        {
-
-
-        }
-        else
-        {
-            String msg = "Erro ao autenticar o usúario";
-            Toast.makeText(Login.this, msg, Toast.LENGTH_LONG).show();
-        }
-    }
 
 
 

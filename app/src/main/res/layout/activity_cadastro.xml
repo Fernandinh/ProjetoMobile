@@ -51,6 +51,7 @@
           android:id="@+id/NOME"
           android:layout_width="match_parent"
           android:layout_height="48dp"
+          android:layout_marginTop="64dp"
           android:ems="10"
           android:fontFamily="@font/caveat_bold"
           android:hint="Nome"
@@ -59,7 +60,7 @@
           android:textColorHint="#314489"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintStart_toStartOf="parent"
-          app:layout_constraintTop_toBottomOf="@+id/addFoto" />
+          app:layout_constraintTop_toBottomOf="@+id/addFot" />
 
       <EditText
           android:id="@+id/SENHA"
@@ -133,14 +134,14 @@
           app:layout_constraintStart_toStartOf="parent" />
 
       <Button
-          android:id="@+id/addFoto"
+          android:id="@+id/addFot"
           android:layout_width="130dp"
           android:layout_height="30dp"
-          android:layout_marginTop="8dp"
+          android:layout_marginTop="4dp"
           android:background="@color/colorAccent"
           android:text="Adicionar Foto"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.486"
+          app:layout_constraintHorizontal_bias="0.493"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toBottomOf="@+id/FotoPerfil" />
 

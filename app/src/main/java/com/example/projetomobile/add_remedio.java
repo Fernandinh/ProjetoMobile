@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +16,7 @@ import static com.example.projetomobile.R.*;
 import com.example.projetomobile.R;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
@@ -45,6 +47,14 @@ public class add_remedio extends AppCompatActivity {
             public void onClick(View v) {
 
                 processinsert();
+
+            }
+        });
+        FloatingActionButton fb = (FloatingActionButton) findViewById(R.id.faddaddremedio);
+        fb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), AdminActivity.class));
 
             }
         });

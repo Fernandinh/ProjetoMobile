@@ -13,8 +13,8 @@
   <androidx.cardview.widget.CardView
 
       android:id="@+id/cardView2"
-      android:layout_width="280dp"
-      android:layout_height="573dp"
+      android:layout_width="276dp"
+      android:layout_height="535dp"
       android:layout_marginTop="12dp"
       app:layout_constraintEnd_toEndOf="parent"
       app:layout_constraintHorizontal_bias="0.496"
@@ -34,8 +34,8 @@
 
       <de.hdodenhof.circleimageview.CircleImageView
           android:id="@+id/FotoPerfil"
-          android:layout_width="136dp"
-          android:layout_height="113dp"
+          android:layout_width="127dp"
+          android:layout_height="98dp"
           android:layout_below="@+id/textView4"
           android:layout_alignParentStart="true"
           android:layout_marginTop="16dp"
@@ -43,7 +43,7 @@
           app:civ_border_color="@color/colorAccent"
           app:civ_border_width="2dp"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.576"
+          app:layout_constraintHorizontal_bias="0.48"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintTop_toTopOf="parent"
           tools:ignore="UnknownId" />
@@ -52,9 +52,9 @@
           android:id="@+id/NOME"
           android:layout_width="match_parent"
           android:layout_height="48dp"
-          android:layout_marginTop="64dp"
+          android:layout_marginTop="36dp"
           android:ems="10"
-          android:fontFamily="@font/caveat_bold"
+
           android:hint="Nome"
           android:inputType="textPersonName"
           android:textColor="#314489"
@@ -69,7 +69,7 @@
           android:layout_height="48dp"
           android:layout_marginTop="8dp"
           android:ems="10"
-          android:fontFamily="@font/caveat_bold"
+
           android:hint="Senha"
           android:inputType="textPassword"
           android:textColor="#314489"
@@ -83,7 +83,7 @@
           android:layout_width="match_parent"
           android:layout_height="48dp"
           android:ems="10"
-          android:fontFamily="@font/caveat_bold"
+
           android:hint="CPF"
           android:inputType="number"
           android:textColor="#314489"
@@ -98,7 +98,7 @@
           android:layout_height="48dp"
           android:layout_marginTop="5dp"
           android:ems="10"
-          android:fontFamily="@font/caveat_bold"
+
           android:hint="Data de nascimento"
           android:inputType="date"
           android:textColor="#314489"
@@ -114,7 +114,7 @@
           android:layout_height="48dp"
           android:layout_marginTop="5dp"
           android:ems="10"
-          android:fontFamily="@font/caveat_bold"
+
           android:hint="Email"
           android:inputType="textPersonName|date"
           android:textColor="#314489"
@@ -154,14 +154,13 @@
           android:layout_height="30dp"
           android:layout_alignParentLeft="true"
           android:layout_alignParentTop="true"
-          android:layout_marginBottom="10dp"
+          android:layout_marginBottom="16dp"
           android:background="@drawable/rectangle11"
           android:fontFamily="@font/caveat_bold"
           android:text="SALVAR"
           android:textColor="#FFFFFF"
           app:layout_constraintBottom_toBottomOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
-          app:layout_constraintHorizontal_bias="0.486"
           app:layout_constraintStart_toStartOf="parent" />
 
 

@@ -182,7 +182,7 @@ public class CallingActivity extends AppCompatActivity {
         MedicoRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child(IdUser).hasChild("Tocando") && dataSnapshot.child(IdUser).hasChild("Ligando"))
+                if(dataSnapshot.child(IdUser).hasChild("Tocando") && !dataSnapshot.child(IdUser).hasChild("Ligando"))
                 {
                     BtnAtender.setVisibility(View.VISIBLE);
                 }
@@ -211,7 +211,6 @@ public class CallingActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists() && dataSnapshot.hasChild("ligando"))
                         {
-
                             callingId = dataSnapshot.child("ligando").getValue().toString();
 
                             MedicoRef.child(callingId)
@@ -259,7 +258,7 @@ public class CallingActivity extends AppCompatActivity {
                         if (dataSnapshot.exists() && dataSnapshot.hasChild("tocando"))
                         {
 
-                            ringningId = dataSnapshot.child("ligando").getValue().toString();
+                            ringningId = dataSnapshot.child("tocando").getValue().toString();
 
                             MedicoRef.child(ringningId)
                                     .child("Ligando")

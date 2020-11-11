@@ -8,12 +8,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.InputType;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -50,11 +48,11 @@ public class Perfil extends AppCompatActivity {
     private static final String TAG ="Perfil" ;
     private BottomNavigationView bottomNavigationView;
 
-    private EditText Email;
-    private EditText Nome;
-    private EditText Senha;
-    private EditText Dtnsc;
-    private EditText Cpf;
+    private TextView Email;
+    private TextView Nome;
+    private TextView Senha;
+    private TextView Dtnsc;
+    private TextView Cpf;
     private TextView Uid;
     private CircleImageView profileImg;
     private DatabaseReference databaseReference;
@@ -96,10 +94,8 @@ public class Perfil extends AppCompatActivity {
 
 
         Nome = findViewById(R.id.NomeUser);
-        Uid = findViewById(R.id.uid);
         Cpf = findViewById(R.id.cpf);
         Dtnsc = findViewById(R.id.dtnsc);
-        Senha = findViewById(R.id.senha);
         Email = findViewById(R.id.email);
         profileImg = findViewById(R.id.FotoUser);
         fb = findViewById(R.id.editarrr);
@@ -140,12 +136,16 @@ public class Perfil extends AppCompatActivity {
                         startActivity(new Intent(getApplicationContext(), MainActivity.class));
                         finish();
                         overridePendingTransition(0,0);
-                        return;
+                        break;
 
                     case R.id.Perfill:
 
 
                     case R.id.Configuracoess:
+                        startActivity(new Intent(getApplicationContext(), Configuracoes.class));
+                        finish();
+                        overridePendingTransition(0,0);
+                        break;
                 }
             }
         });
@@ -153,103 +153,51 @@ public class Perfil extends AppCompatActivity {
         fb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-/*
-                AlertDialog.Builder builder = new AlertDialog.Builder(Perfil.this);
-                builder.setTitle("Voce quer atualizar seu perfil?");
+              ConfirmarSenha();
 
-                final EditText editText = new EditText(Perfil.this);
-                editText.setHint("Enter");
+            }
+        });
 
+    }
+    private void ConfirmarSenha() {
 
-                builder.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+        View view = LayoutInflater.from(Perfil.this).inflate(R.layout.dialog_confirmar_senha, null);
 
-                       View view = LayoutInflater.from(Perfil.this).inflate(R.layout.dialog_update, null);
+        final EditText SenhaConfirmar = view.findViewById(R.id.ConfirmarSenha);
+        Button BtnConfimar = view.findViewById(R.id.CONFIRMAR_SENHA);
 
-                        CircleImageView FotoEditar = view.findViewById(R.id.FotoEditar);
-                        EditText Nome = view.findViewById(R.id.NomeEditar);
-                         final EditText Senha = view.findViewById(R.id.SenhaEditar);
-                         final EditText Email = view.findViewById(R.id.EmailEditar);
-                        EditText Dtnsc = view.findViewById(R.id.DtnscEditar);
-                        Button BotaoAtualizar = view.findViewById(R.id.BtnEditarr);
+        final AlertDialog.Builder builder = new AlertDialog.Builder(Perfil.this);
+        builder.setView(view);
 
+        final AlertDialog dialog = builder.create();
+        dialog.show();
 
-                        AlertDialog.Builder Atualizar = new AlertDialog.Builder(Perfil.this);
-                        Atualizar.setView(view);
+        BtnConfimar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String Senha = SenhaConfirmar.getText().toString();
 
-                        Atualizar.create().show();
+                if(TextUtils.isEmpty(Senha))
+                {
+                    Toast.makeText(Perfil.this, "Coloque sua Senha", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-
-                        BotaoAtualizar.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                String NovoEmail = Email.getText().toString();
-                                String NovaSenha = Senha.getText().toString();
-
-                                if(!Patterns.EMAIL_ADDRESS.matcher(NovoEmail).matches()) {
-                                    Email.setError("Email inválido");
-                                    Email.setFocusable(true);
-                                }
-
-                                if(NovaSenha.length() < 6)
-                                {
-                                    Senha.setError("A senha precisa ter no minimo 6 caracteres");
-                                    Senha.setFocusable(true);
-                                }
-
-                                /*UpdateEmaileSenha(NovoEmail,NovaSenha);
-                              UpdateEmail(NovoEmail);
-                                UpdateSenha(NovaSenha);
-                               // Update(v)
-
-
-
-
-                            }
-                        });
-
-
-                    }
-                });
-
-                builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                });
-
-                builder.create().show();
-               */ EditarPerfil();
-
+                if(Senha.equals(Senha_User))
+                {
+                    EditarPerfil();
+                }
+                else
+                {
+                    Toast.makeText(Perfil.this,"Senha Incorreta", Toast.LENGTH_SHORT).show();
+                }
+                dialog.dismiss();
             }
         });
 
     }
 
 
-
-    private void UpdateEmail(final String NovoEmail) {
-
-
-        user.updateEmail(NovoEmail).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-
-                dr.child("Usuário").child(user.getUid()).child("email").setValue(NovoEmail);
-                Email_User = NovoEmail;
-                Toast.makeText(getApplicationContext(), "Email Atualizado", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-
-                Toast.makeText(getApplicationContext(), "Não foi possivel atualizar seu Email" +e.getMessage(), Toast.LENGTH_SHORT).show();
-
-            }
-        });
-    }
 
     private void UpdateSenha(final String NovaSenha) {
 
@@ -279,8 +227,6 @@ public class Perfil extends AppCompatActivity {
 
 
     }
-
-
 
     private void EditarPerfil() {
 
@@ -404,8 +350,6 @@ public class Perfil extends AppCompatActivity {
                     Email.setText(Email_User);
                     Cpf.setText(Cpf_User);
                     Dtnsc.setText(Nascimento_User);
-                    Senha.setText(Senha_User);
-                    Uid.setText(mAuth.getCurrentUser().getUid());
                 }
             }
 
@@ -451,13 +395,11 @@ public class Perfil extends AppCompatActivity {
                 final String cpf = Cpf.getText().toString().trim();
                 final String dtns = Dtnsc.getText().toString().trim();
 
-
-                if (!TextUtils.isEmpty(nome)){
-
+                
                     UpdateSenha(senha);
 
 
-                    dr.child("Usuário").child(user.getUid()).child("nome").setValue(nome)
+                dr.child("Usuário").child(user.getUid()).child("nome").setValue(nome)
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
@@ -509,10 +451,6 @@ public class Perfil extends AppCompatActivity {
                     Toast.makeText(Perfil.this, " Atualização Realizada com Sucesso !\n", Toast.LENGTH_SHORT).show();
 
 
-                }else{
-                    Toast.makeText(Perfil.this, "Por favor insira"+Nome, Toast.LENGTH_SHORT).show();
-
-                }
             }
         });
 

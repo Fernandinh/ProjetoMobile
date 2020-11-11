@@ -25,7 +25,7 @@ public class add_remedio extends AppCompatActivity {
 
     EditText nome;
     EditText descricao;
-    EditText qtd;
+    EditText indicacao;
     EditText foto;
     Button add;
 
@@ -37,7 +37,7 @@ public class add_remedio extends AppCompatActivity {
 
         nome = (EditText)findViewById(id.addnome);
         descricao = (EditText)findViewById(id.addescricao);
-        qtd = (EditText)findViewById(id.addqtd);
+        indicacao = (EditText)findViewById(id.addqtd);
         foto = (EditText)findViewById(id.addimage);
         add = (Button)findViewById(R.id.add);
         add.setOnClickListener(new View.OnClickListener() {
@@ -54,16 +54,16 @@ public class add_remedio extends AppCompatActivity {
         Map<String,Object> map = new HashMap<>();
         map.put("Nome", nome.getText().toString());
         map.put("Descricao", descricao.getText().toString());
-        map.put("Quantidade", qtd.getText().toString());
+        map.put("Indicacao", indicacao.getText().toString());
         map.put("Imagem", foto.getText().toString());
-        FirebaseDatabase.getInstance().getReference().child("Remédios").push()
+        FirebaseDatabase.getInstance().getReference().child("Vacinas").push()
                 .setValue(map)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         nome.setText("");
                         descricao.setText("");
-                        qtd.setText("");
+                        indicacao.setText("");
                         foto.setText("");
                         Toast.makeText(getApplicationContext() ,"Inserido com Sucesso", Toast.LENGTH_LONG).show();
 

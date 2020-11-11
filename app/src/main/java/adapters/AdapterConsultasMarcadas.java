@@ -4,12 +4,14 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetomobile.R;
+import com.squareup.picasso.Picasso;
 
 import org.w3c.dom.Text;
 
@@ -23,7 +25,6 @@ public class AdapterConsultasMarcadas extends RecyclerView.Adapter<AdapterConsul
 
     Context context;
     List<ConsultasMarcadas> consultasMarcadas;
-
 
 
     public AdapterConsultasMarcadas(Context context, List<ConsultasMarcadas> consultasMarcadas) {
@@ -46,6 +47,7 @@ public class AdapterConsultasMarcadas extends RecyclerView.Adapter<AdapterConsul
         holder.horarioo.setText(consultasMarcadas.get(position).getHora());
         holder.locall.setText(consultasMarcadas.get(position).getLocal());
         holder.doutorr.setText(consultasMarcadas.get(position).getMedico());
+        Picasso.get().load(consultasMarcadas.get(position).getFoto()).into(holder.ft);
     }
 
     @Override
@@ -61,6 +63,7 @@ public class AdapterConsultasMarcadas extends RecyclerView.Adapter<AdapterConsul
         TextView horarioo;
         TextView locall;
         TextView doutorr;
+        ImageView ft;
 
 
         public MyViewHolder(@NonNull View itemView) {
@@ -72,6 +75,7 @@ public class AdapterConsultasMarcadas extends RecyclerView.Adapter<AdapterConsul
             horarioo = (TextView)itemView.findViewById(R.id.horario) ;
             locall = (TextView) itemView.findViewById(R.id.local);
             doutorr = (TextView) itemView.findViewById(R.id.doutor);
+            ft = itemView.findViewById(R.id.ft);
         }
     }
 }

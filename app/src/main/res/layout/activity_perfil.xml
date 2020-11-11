@@ -19,12 +19,14 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/FotoUser"
-            android:layout_width="138dp"
-            android:layout_height="117dp"
+            android:layout_width="182dp"
+            android:layout_height="143dp"
             android:layout_below="@+id/textView4"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="131dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="99dp"
             android:layout_marginTop="4dp"
+            android:layout_marginEnd="115dp"
             app:civ_border_color="@color/botaodevoltar"
             app:civ_border_width="2dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -33,15 +35,18 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="UnknownId" />
 
-        <EditText
+        <TextView
             android:id="@+id/NomeUser"
-            android:layout_width="372dp"
-            android:layout_height="66dp"
+            android:layout_width="352dp"
+            android:layout_height="47dp"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="148dp"
-            android:layout_marginEnd="13dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="169dp"
+            android:layout_marginEnd="24dp"
             android:text="..."
+            android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -54,13 +59,12 @@
         android:id="@+id/navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
         app:itemBackground="@color/colorAccent"
         app:itemIconTint="@drawable/selector"
         app:itemTextColor="@drawable/selector"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/menu_navigation" />
 
@@ -103,10 +107,10 @@
         android:orientation="vertical"
         app:layout_constraintGuide_begin="105dp" />
 
-    <EditText
+    <TextView
         android:id="@+id/cpf"
-        android:layout_width="220dp"
-        android:layout_height="49dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="000.000.000-00"
         app:layout_constraintBottom_toTopOf="@+id/guideline4"
         app:layout_constraintEnd_toEndOf="parent"
@@ -149,7 +153,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline7" />
 
-    <EditText
+    <TextView
         android:id="@+id/dtnsc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -159,7 +163,7 @@
         app:layout_constraintStart_toStartOf="@+id/guideline5"
         app:layout_constraintTop_toTopOf="@+id/guideline4" />
 
-    <EditText
+    <TextView
         android:id="@+id/email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -181,36 +185,5 @@
         app:srcCompat="@drawable/ic_mode_edit_black_24dp" />
 
 
-    <TextView
-        android:id="@+id/senhaa"
-        android:layout_width="wrap_content"
-        android:layout_height="14dp"
-        android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/senha"
-        app:layout_constraintStart_toStartOf="parent"
-         />
-
-    <EditText
-        android:id="@+id/senha"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="56dp"
-        android:ems="10"
-        android:fontFamily="@font/caveat_bold"
-        android:hint="Senha"
-        android:inputType="text"
-        android:textColor="#314489"
-        android:textColorHint="#314489"
-        app:layout_constraintBottom_toTopOf="@+id/navigation"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/uid"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toTopOf="@+id/senha"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

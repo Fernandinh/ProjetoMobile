@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.Html;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
@@ -19,25 +18,17 @@ import com.github.rtoshiro.util.format.text.MaskTextWatcher;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
-import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-
-import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import model.Usuario;
@@ -59,7 +50,6 @@ public class Cadastro extends AppCompatActivity {
     private CircleImageView profileImg;
     private FirebaseDatabase database;
     private DatabaseReference myRef;
-    private DatabaseReference dr;
     private FirebaseAuth mAuth;
     private StorageReference storageProfilePicsRef;
     private Uri imageUri;
@@ -78,9 +68,6 @@ public class Cadastro extends AppCompatActivity {
 
         storageProfilePicsRef = FirebaseStorage.getInstance().getReference().child("Foto de Perfil");
         mAuth = FirebaseAuth.getInstance();
-        dr = FirebaseDatabase.getInstance().getReference().child("Usuário");
-
-
         usuario = new Usuario();
 
         Nome = findViewById(R.id.NOME);
@@ -100,8 +87,6 @@ public class Cadastro extends AppCompatActivity {
         SimpleMaskFormatter simpleMaskFormatter = new SimpleMaskFormatter("NN/NN/NNNN");
         MaskTextWatcher maskTextWatcher = new MaskTextWatcher(Dtns, simpleMaskFormatter);
         Dtns.addTextChangedListener(maskTextWatcher);
-
-
 
         Cadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -124,7 +109,7 @@ public class Cadastro extends AppCompatActivity {
                 }
                 else {
                     UploadProfileImage();
-                    CreateUser (nome, email, senha, cpf, dtns,myUri);
+                    CreateUser (nome, email, senha, cpf, dtns, myUri);
                 }
 
 
@@ -221,7 +206,7 @@ public class Cadastro extends AppCompatActivity {
 
 
 
-    private void CreateUser(final String nome, String email, final String senha, final String cpf, final String dtns, final String myUri)
+    private void CreateUser(final String nome, final String email, final String senha, final String cpf, final String dtns, final String myUri)
     {
 
         if(nome == null || nome.isEmpty() || email == null || email.isEmpty() || senha == null || senha.isEmpty() || cpf == null || senha.isEmpty() || dtns == null || dtns.isEmpty())
@@ -241,7 +226,7 @@ public class Cadastro extends AppCompatActivity {
                     String uid = user.getUid();
                     Log.i("Imagem", myUri);
 
-                    CadastrarUsuario(uid, nome, email, senha, cpf, dtns, myUri);
+                    CadastrarUsuario(uid, nome, email, senha, cpf, dtns);
 
                 }
             }
@@ -258,12 +243,12 @@ public class Cadastro extends AppCompatActivity {
 
     }
 
-    private void CadastrarUsuario (String uid, String nome, String email, String senha, String cpf, String dtnsc, String myUri)
+    private void CadastrarUsuario (String uid, String nome, String email, String senha, String cpf, String dtnsc)
     {
 
         usuario.setNome(nome);
+        usuario.setTipo("user");
         usuario.setUid(uid);
-        usuario.setImagem(myUri);
         usuario.setEmail(email);
         usuario.setSenha(senha);
         usuario.setCpf(cpf);

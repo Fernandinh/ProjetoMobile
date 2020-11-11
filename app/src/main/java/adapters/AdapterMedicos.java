@@ -16,9 +16,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.projetomobile.CallingActivity;
 import com.example.projetomobile.MarcarConsulta;
 import com.example.projetomobile.R;
 import com.example.projetomobile.RecycleView_Remedios;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -37,12 +40,11 @@ public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewH
     ArrayList<Medicos> list;
 
 
-    public AdapterMedicos(Context context, ArrayList<Medicos> medicos, String email, String uid) {
+    public AdapterMedicos(Context context, ArrayList<Medicos> medicos, String email) {
         this.context = context;
         this.medicos = medicos;
         list = new ArrayList<>(medicos);
         Email = email;
-        UID = uid;
 
     }
 
@@ -57,7 +59,7 @@ public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewH
 
         holder.Nome.setText(medicos.get(position).getNome());
         holder.Especialidade.setText(medicos.get(position).getEspecialidade());
-        holder.Hospital.setText(medicos.get(position).getHospital());
+        holder.Hospital.setText(medicos.get(position).getLocal());
         Picasso.get().load(medicos.get(position).getImagem()).into(holder.Img);
 
         holder.Consultaa.setOnClickListener(new View.OnClickListener() {
@@ -67,11 +69,20 @@ public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewH
                 Intent intent = new Intent(context, MarcarConsulta.class);
                 intent.putExtra("medico", medicos.get(position).getNome());
                 intent.putExtra("especialidade", medicos.get(position).getEspecialidade());
-                intent.putExtra("local", medicos.get(position).getHospital());
+                intent.putExtra("local", medicos.get(position).getLocal());
                 intent.putExtra("email", Email);
                 intent.putExtra("UID", UID);
                 context.startActivity(intent);
 
+            }
+        });
+
+        holder.Video.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent callingIntent = new Intent(context, CallingActivity.class);
+                callingIntent.putExtra("UID_MEDICO", medicos.get(position).getUid());
+                context.startActivity(callingIntent);
             }
         });
     }
@@ -121,6 +132,7 @@ public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewH
         }
     };
 
+
     class MyViewHolder extends RecyclerView.ViewHolder
     {
         TextView Nome;
@@ -128,6 +140,7 @@ public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewH
         TextView Hospital;
         ImageView Img;
         Button Consultaa;
+        Button Video;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -137,7 +150,9 @@ public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewH
             Hospital = (TextView)itemView.findViewById(R.id.Hospital);
             Img = (ImageView)itemView.findViewById(R.id.FotO);
             Consultaa = (Button)itemView.findViewById(R.id.BtnMarcarConsulta);
+            Video = (Button)itemView.findViewById(R.id.VideoCall);
 
         }
     }
+
 }

@@ -93,6 +93,7 @@
                 android:id="@+id/image_12"
                 android:layout_width="53dp"
                 android:layout_height="53dp"
+                android:onClick="Vacina"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="28dp"

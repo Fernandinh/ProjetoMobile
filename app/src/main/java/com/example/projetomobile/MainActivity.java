@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.strictmode.WebViewMethodCalledOnWrongThreadViolation;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,7 +19,6 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -34,10 +32,7 @@ import com.squareup.picasso.Picasso;
 import java.util.HashMap;
 import java.util.Map;
 
-import Mapa.MapModel;
-import VarialvelGlobal.InfoUser;
 import de.hdodenhof.circleimageview.CircleImageView;
-import model.Medicos;
 import model.Usuario;
 
 
@@ -104,13 +99,18 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(new Intent(getApplicationContext(), Perfil.class));
                         finish();
                         overridePendingTransition(0,0);
-                        return;
+                        break;
 
                     case R.id.Configuracoess:
+                        startActivity(new Intent(getApplicationContext(), Configuracoes.class));
+                        finish();
+                        overridePendingTransition(0,0);
+                        return;
                 }
             }
         });
     }
+
 
    public void RecuperarDados(Query query)
     {
@@ -200,6 +200,12 @@ public class MainActivity extends AppCompatActivity {
         Intent menu = new Intent(this, recycle_view_consultas_antigas.class);
         menu.putExtra("email", email);
         startActivity(menu);
+    }
+
+    public void Vacina(View view){
+
+        Intent vacina = new Intent(this, RecycleViewVacina.class);
+        startActivity(vacina);
     }
 
     public void ConsultasMarcadas(View view){

@@ -41,8 +41,7 @@
             android:layout_marginTop="10dp"
             android:text="TextView"
             android:textColor="#000000"
-            android:textSize="15dp"
-            />
+            android:textSize="15dp" />
 
         <TextView
             android:id="@+id/doutor"
@@ -54,8 +53,7 @@
             android:layout_marginTop="5dp"
             android:text="TextView"
             android:textColor="#000000"
-            android:textSize="15dp"
-            />
+            android:textSize="15dp" />
 
         <TextView
             android:id="@+id/local"
@@ -67,20 +65,18 @@
             android:layout_marginTop="5dp"
             android:text="TextView"
             android:textColor="#000000"
-            android:textSize="15dp"
-             />
+            android:textSize="15dp" />
 
         <TextView
             android:id="@+id/horario"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/local"
-            android:layout_marginTop="5dp"
             android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
             android:text="TextView"
             android:textColor="#000000"
-            android:textSize="15dp"
-             />
+            android:textSize="15dp" />
 
         <TextView
             android:id="@+id/dia"
@@ -91,8 +87,15 @@
             android:layout_marginTop="5dp"
             android:text="TextView"
             android:textColor="#000000"
-            android:textSize="15dp"
-            />
+            android:textSize="15dp" />
+
+        <ImageView
+            android:id="@+id/ft"
+            android:layout_width="160dp"
+            android:layout_height="300dp"
+            android:layout_marginStart="210dp"
+            android:layout_marginTop="35dp"
+           />
 
     </RelativeLayout>
 

@@ -8,17 +8,19 @@ public class ConsultasMarcadas {
     private String Hora;
     private String Local;
     private String Medico;
+    private String Foto;
 
     public ConsultasMarcadas() {
     }
 
-    public ConsultasMarcadas(String nome, String data, String especialidade, String hora, String local, String medico) {
+    public ConsultasMarcadas(String nome, String data, String especialidade, String hora, String local, String medico, String foto) {
         Nome = nome;
         Data = data;
         Especialidade = especialidade;
         Hora = hora;
         Local = local;
         Medico = medico;
+        Foto = foto;
     }
 
     public String getNome() {
@@ -67,5 +69,13 @@ public class ConsultasMarcadas {
 
     public void setMedico(String medico) {
         Medico = medico;
+    }
+
+    public String getFoto() {
+        return Foto;
+    }
+
+    public void setFoto(String foto) {
+        Foto = foto;
     }
 }

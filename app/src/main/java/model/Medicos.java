@@ -2,17 +2,25 @@ package model;
 
 public class Medicos {
     private String Nome;
+    private String Uid;
+    private String Email;
+    private String Senha;
+    private String Tipo;
     private String Especialidade;
-    private String Hospital;
+    private String Local;
     private String Imagem;
 
     public Medicos() {
     }
 
-    public Medicos(String nome, String especialidade, String hospital, String imagem) {
+    public Medicos(String nome, String uid, String email, String senha, String tipo, String especialidade, String local, String imagem) {
         Nome = nome;
+        Uid = uid;
+        Email = email;
+        Senha = senha;
+        Tipo = tipo;
         Especialidade = especialidade;
-        Hospital = hospital;
+        Local = local;
         Imagem = imagem;
     }
 
@@ -24,6 +32,38 @@ public class Medicos {
         Nome = nome;
     }
 
+    public String getUid() {
+        return Uid;
+    }
+
+    public void setUid(String uid) {
+        Uid = uid;
+    }
+
+    public String getEmail() {
+        return Email;
+    }
+
+    public void setEmail(String email) {
+        Email = email;
+    }
+
+    public String getSenha() {
+        return Senha;
+    }
+
+    public void setSenha(String senha) {
+        Senha = senha;
+    }
+
+    public String getTipo() {
+        return Tipo;
+    }
+
+    public void setTipo(String tipo) {
+        Tipo = tipo;
+    }
+
     public String getEspecialidade() {
         return Especialidade;
     }
@@ -32,12 +72,12 @@ public class Medicos {
         Especialidade = especialidade;
     }
 
-    public String getHospital() {
-        return Hospital;
+    public String getLocal() {
+        return Local;
     }
 
-    public void setHospital(String hospital) {
-        Hospital = hospital;
+    public void setLocal(String local) {
+        Local = local;
     }
 
     public String getImagem() {

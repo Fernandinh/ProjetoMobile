@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -20,19 +21,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
 
-import VarialvelGlobal.InfoUser;
 import adapters.AdapterConsultasMarcadas;
 import model.ConsultasMarcadas;
-import model.Usuario;
 
 public class RecyclerView_Consultas_Marcadas extends AppCompatActivity {
 
     RecyclerView recview;
     DatabaseReference dr;
-    DatabaseReference dF;
+    TextView date;
     FirebaseUser user;
     FirebaseAuth mAuth;
     FirebaseDatabase database;
@@ -45,6 +48,17 @@ public class RecyclerView_Consultas_Marcadas extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recycler_view__consultas__marcadas);
         setTitle("Consultas Marcadas");
+
+        date = (TextView) findViewById(R.id.datee);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        String today = DateFormat.getDateInstance(SimpleDateFormat.DATE_FIELD).format(calendar.getTime());
+        //date.setText(today);
+
+
+
+
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -68,6 +82,7 @@ public class RecyclerView_Consultas_Marcadas extends AppCompatActivity {
                 list.clear();
                 for(DataSnapshot dataSnapshot: snapshot.getChildren())
                 {
+                    String data = dataSnapshot.child("Data").getValue().toString();
                     ConsultasMarcadas c = dataSnapshot.getValue(ConsultasMarcadas.class);
                     list.add(c);
                 }

@@ -1,10 +1,12 @@
 package com.example.projetomobile;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -12,17 +14,22 @@ import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -57,6 +64,8 @@ public class MarcarConsulta extends AppCompatActivity {
     FirebaseAuth mAuth;
     FirebaseDatabase database;
     Context context;
+    Dialog dialog;
+    String dateString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,9 +90,7 @@ public class MarcarConsulta extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         database = FirebaseDatabase.getInstance();
-        dr = database.getReference("usuario");
-
-
+        dr = database.getReference("Usuário");
 
 
         context = this;
@@ -98,10 +105,15 @@ public class MarcarConsulta extends AppCompatActivity {
         btnHora = findViewById(R.id.BTNhora);
         btnConsulta = findViewById(R.id.btnMarcarConsulta);
 
-        Nome.setText(email);
+        RecuperarNome();
+
         Medico.setText(medico);
         Especialidade.setText(especialidade);
         Local.setText(local);
+
+        DesabilitarHeditText(Medico);
+        DesabilitarHeditText(Especialidade);
+        DesabilitarHeditText(Local);
 
         btnConsulta.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -137,11 +149,31 @@ public class MarcarConsulta extends AppCompatActivity {
         });
 
     }
-    public void voltartelainici (View view){
 
-        Intent intent = new Intent(this, RecycleView_Medicos.class);
-        startActivity(intent);
+    private void RecuperarNome() {
+
+        dr.child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                String NomeUser = dataSnapshot.child("nome").getValue().toString();
+                Nome.setText(NomeUser);
+                DesabilitarHeditText(Nome);
+
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
+
+    private void DesabilitarHeditText(EditText editText) {
+        editText.setEnabled(false);
+    }
+
 
     private void Validação() {
         String d = Data.getText().toString();
@@ -224,7 +256,7 @@ public class MarcarConsulta extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int date) {
 
-                String dateString= date + " " + month + " " + year;
+                dateString = date + "/" + month + "/" + year;
                 Data.setText(dateString);
 
                 Calendar calendar1 = Calendar.getInstance();
@@ -234,6 +266,7 @@ public class MarcarConsulta extends AppCompatActivity {
 
                 CharSequence dateCharSequence = DateFormat.format("EEEE, dd MMM yyyy", calendar1);
                 Data.setText(dateCharSequence);
+
 
             }
         },YEAR,MONTH,DATE);
@@ -252,6 +285,15 @@ public class MarcarConsulta extends AppCompatActivity {
         map.put("Hora", Hora.getText().toString());
         map.put("Local", Local.getText().toString());
 
+        if(Especialidade.getText().toString().equals("Odontologia"))
+        {
+            map.put("Foto", "https://images.educamaisbrasil.com.br/content/noticias/conheca-as-principais-especializacoes-de-odontologia_g.jpg");
+        }
+        else  if(Especialidade.getText().toString().equals("Pediatra"))
+        {
+            map.put("Foto", "https://saudebusiness.com/wp-content/uploads/2017/05/pediatra.jpg");
+        }
+
         FirebaseDatabase.getInstance().getReference().child("Consultas Marcadas").push()
                 .setValue(map)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -264,11 +306,39 @@ public class MarcarConsulta extends AppCompatActivity {
                         Hora.setText("");
                         Local.setText("");
 
-
-
-
-
                     }
                 });
+
+        Confirmacao();
     }
+
+    private void Confirmacao() {
+
+        dialog = new Dialog(MarcarConsulta.this);
+        dialog.setContentView(R.layout.dialog_confirmado);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP )
+        {
+            dialog.getWindow().setBackgroundDrawable(getDrawable(R.drawable.background));
+        }
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.setCancelable(false);
+        dialog.getWindow().getAttributes().windowAnimations = R.style.animation;
+
+        Button ok;
+        ok = dialog.findViewById(R.id.BtnOk);
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                Intent intent = new Intent(MarcarConsulta.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
+        dialog.show();
+    }
+
 }

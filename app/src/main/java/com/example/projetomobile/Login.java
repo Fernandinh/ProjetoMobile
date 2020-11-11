@@ -3,39 +3,51 @@ package com.example.projetomobile;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
-import okhttp3.internal.Util;
+import model.Usuario;
 
 
 public class Login extends AppCompatActivity {
 
+    private static final String TAG = Login.class.getSimpleName();
+
     private EditText Email;
     private EditText Senha;
+    private String NomeUser = "";
+    private String TipoDoctor = "";
+    private String TipoAdm = "";
+    private String TipoUser = "";
     private EditText Voltar;
     private Button Logar;
     private Button Forgot;
+    private Query query;
+    private  DatabaseReference dr;
+
     private FirebaseAuth mAuth;
 
     @Override
@@ -44,7 +56,6 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
-
 
         Email = findViewById(R.id.EMAIL);
         Senha = findViewById(R.id.SENHA);
@@ -60,16 +71,15 @@ public class Login extends AppCompatActivity {
                 String senha = Senha.getText().toString().trim();
                 User();
 
-                if(!Patterns.EMAIL_ADDRESS.matcher(email).matches())
-                {
+                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
 
                     Email.setError("Email Inválido");
                     Email.setFocusable(true);
 
-                }
-                else
-                {
-                    UserLogin(email,senha);
+                } else {
+                    UserLogin( email, senha, NomeUser, TipoUser);
+
+
                 }
 
                 FloatingActionButton fb = (FloatingActionButton) findViewById(R.id.login);
@@ -95,7 +105,8 @@ public class Login extends AppCompatActivity {
         });
 
     }
-    public void voltartelainicio (View view){
+
+    public void voltartelainicio(View view) {
 
         Intent intent = new Intent(this, TelaInicio.class);
         startActivity(intent);
@@ -112,31 +123,47 @@ public class Login extends AppCompatActivity {
         }
     }
 
-
-    private void UserLogin(String email, String senha) {
-
+    private void UserLogin( String email, String senha, String nome, String tipo) {
 
         mAuth.signInWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUi(user);
-                            String msg ="Bem Vindo";
-                            Toast.makeText(Login.this, msg, Toast.LENGTH_LONG).show();
+                    public void onComplete(@NonNull final Task<AuthResult> task) {
+
+                        if(task.isSuccessful())
+                        {
+                            dr = FirebaseDatabase.getInstance().getReference().child("Usuário").child(mAuth.getCurrentUser().getUid());
+                            RecuperarDados( dr);
+                            Log.e(TAG, "fora"+ TipoUser);
+
+                            if(TipoUser.equals("user"))
+                            {
+                                Intent Main = new Intent(Login.this, MainActivity.class);
+                                Main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(Main);
+                                finish();
+                                Toast.makeText(Login.this, "Bem vindo " +NomeUser, Toast.LENGTH_SHORT).show();
+                            }
+                            else if(TipoUser.equals("doctor"))
+                            {
+                                Intent doctor = new Intent(Login.this, MedicoActivy.class);
+                                doctor.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(doctor);
+                                finish();
+                                Toast.makeText(Login.this, "Bem vindo " +NomeUser, Toast.LENGTH_SHORT).show();
+                            }
+                            else if(TipoUser.equals("admin"))
+                            {
+                                Intent Adm = new Intent(Login.this, AdminActivity.class);
+                                Adm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(Adm);
+                                finish();
+                                Toast.makeText(Login.this, "Bem vindo " +NomeUser, Toast.LENGTH_SHORT).show();
+                            }
 
 
 
-
-                        } else {
-                            // If sign in fails, display a message to the user.
-                            Toast.makeText(Login.this, "Falha ao realizar o login",
-                                    Toast.LENGTH_SHORT).show();
                         }
-
-                        // ...
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -147,16 +174,25 @@ public class Login extends AppCompatActivity {
     }
 
 
+    private void RecuperarDados(DatabaseReference dr) {
+
+        dr.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                TipoUser = dataSnapshot.child("tipo").getValue().toString();
+                NomeUser = dataSnapshot.child("nome").getValue().toString();
+                Log.e(TAG, "dentro"+ TipoUser);
+            }
 
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
-    public void updateUi(FirebaseUser currentUser) {
-
-        Intent menu = new Intent(this, MainActivity.class);
-        menu.putExtra("UID", currentUser.getUid());
-        menu.putExtra("email", currentUser.getEmail());
-        startActivity(menu);
+            }
+        });
     }
+
     private void RecuperarSenha() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -202,11 +238,12 @@ public class Login extends AppCompatActivity {
 
                 if(task.isSuccessful())
                 {
+
                     Toast.makeText(Login.this, "O link de Redefinição de Senha foi enviado para o seu Email", Toast.LENGTH_SHORT).show();
                 }
                 else
                 {
-                        Toast.makeText(Login.this, "Não foi possível enviar o link para o seu Email", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Login.this, "Não foi possível enviar o link para o seu Email", Toast.LENGTH_SHORT).show();
                 }
 
             }

@@ -29,9 +29,6 @@ public class AdapterRemedios extends RecyclerView.Adapter<AdapterRemedios.MyView
         this.remedios = remedios;
     }
 
-    public AdapterRemedios(FirebaseRecyclerOptions<Remedios> options) {
-
-    }
 
     @NonNull
     @Override

@@ -81,7 +81,7 @@ public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewH
             @Override
             public void onClick(View v) {
                 Intent callingIntent = new Intent(context, CallingActivity.class);
-                callingIntent.putExtra("UID_MEDICO", medicos.get(position).getUid());
+                callingIntent.putExtra("UID_LIGACAO", medicos.get(position).getUid());
                 context.startActivity(callingIntent);
             }
         });

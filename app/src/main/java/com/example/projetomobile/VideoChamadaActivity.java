@@ -36,23 +36,23 @@ public class VideoChamadaActivity extends AppCompatActivity
 {
 
 
-    private static String API_Key = "46980034";
-    private static String SESSION_ID = "1_MX40Njk4MDAzNH5-MTYwNDgyMTUyMzAyMX5mU2NzN2ZuWGtYMFFMQWVjcDRlYUdGejV-fg";
-    private static  String TOKEN = "T1==cGFydG5lcl9pZD00Njk4MDAzNCZzaWc9NzVhMzAyYzBlNmFhZTc5NTUyMDE2YjFhNmU3ZmJmYmNiYjI3N2Y1YTpzZXNzaW9uX2lkPTFfTVg0ME5qazRNREF6Tkg1LU1UWXdORGd5TVRVeU16QXlNWDVtVTJOek4yWnVXR3RZTUZGTVFXVmpjRFJsWVVkR2VqVi1mZyZjcmVhdGVfdGltZT0xNjA0ODIxNjI4Jm5vbmNlPTAuNDg5NjE2NzE1OTI2ODU0MSZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNjA3NDEzNjI3JmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9";
+    private static String API_Key = "46985484";
+    private static String SESSION_ID = "1_MX40Njk4NTQ4NH5-MTYwNTEzNjcyNzc0OX5IZitGL29wUUxPNUJoMFFHdmRvdW93UWV-fg";
+    private static  String TOKEN = "T1==cGFydG5lcl9pZD00Njk4NTQ4NCZzaWc9MTYwYjc3M2NjOTkxNDBhNTMyYzVmZjViNDkyMzU3MzhmMDFlOTIyNzpzZXNzaW9uX2lkPTFfTVg0ME5qazROVFE0Tkg1LU1UWXdOVEV6TmpjeU56YzBPWDVJWml0R0wyOXdVVXhQTlVKb01GRkhkbVJ2ZFc5M1VXVi1mZyZjcmVhdGVfdGltZT0xNjA1MTM2ODY1Jm5vbmNlPTAuMjAxMjk2MDY4NDg3NjA1OTUmcm9sZT1wdWJsaXNoZXImZXhwaXJlX3RpbWU9MTYwNzcyODg2NSZpbml0aWFsX2xheW91dF9jbGFzc19saXN0PQ==";
     private static final String TAG = VideoChamadaActivity.class.getSimpleName();
     private static final int RC_VIDEO_APP_PERM = 124;
 
-    private FrameLayout PubController;
-    private FrameLayout SubController;
+    private FrameLayout mPublisherViewController;
+    private FrameLayout mSubscriberViewController;
 
     private Session mSession;
-    private Publisher mPublusher;
+    private Publisher mPublisher;
     private Subscriber mSubscriber;
 
 
     private ImageView BtnFecharVideo;
     private DatabaseReference dr;
-    FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
     private String UserId = "";
 
     @Override
@@ -69,6 +69,7 @@ public class VideoChamadaActivity extends AppCompatActivity
         BtnFecharVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 dr.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -77,9 +78,9 @@ public class VideoChamadaActivity extends AppCompatActivity
                         {
                             dr.child(UserId).child("Tocando").removeValue();
 
-                            if(mPublusher != null)
+                            if(mPublisher != null)
                             {
-                                mPublusher.destroy();
+                                mPublisher.destroy();
                             }
 
                             if(mSubscriber != null)
@@ -87,16 +88,16 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoChamadaActivity.this, Cadastro.class));
+                            startActivity(new Intent(VideoChamadaActivity.this, MainActivity.class));
                             finish();
                         }
                         if(dataSnapshot.child(UserId).hasChild("Ligando"))
                         {
                             dr.child(UserId).child("Ligando").removeValue();
 
-                            if(mPublusher != null)
+                            if(mPublisher != null)
                             {
-                                mPublusher.destroy();
+                                mPublisher.destroy();
                             }
 
                             if(mSubscriber != null)
@@ -104,14 +105,14 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoChamadaActivity.this, Cadastro.class));
+                            startActivity(new Intent(VideoChamadaActivity.this, MainActivity.class));
                             finish();
                         }
                         else
                         {
-                            if(mPublusher != null)
+                            if(mPublisher != null)
                             {
-                                mPublusher.destroy();
+                                mPublisher.destroy();
                             }
 
                             if(mSubscriber != null)
@@ -119,7 +120,7 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoChamadaActivity.this, Cadastro.class));
+                            startActivity(new Intent(VideoChamadaActivity.this, MainActivity.class));
                             finish();
                         }
                     }
@@ -143,26 +144,23 @@ public class VideoChamadaActivity extends AppCompatActivity
     }
 
     @AfterPermissionGranted(RC_VIDEO_APP_PERM)
-    private void requestPermissions()
-    {
+
+    private void requestPermissions() {
         String[] perms = {Manifest.permission.INTERNET, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
 
-        if(EasyPermissions.hasPermissions(this, perms))
-        {
-            SubController = findViewById(R.id.sub_container);
-            PubController = findViewById(R.id.pub_container);
+        if (EasyPermissions.hasPermissions(this, perms)) {
+            mSubscriberViewController = findViewById(R.id.subscriber_container);
+            mPublisherViewController = findViewById(R.id.publisher_container);
 
-            mSession = new Session.Builder(this, API_Key,SESSION_ID).build();
-
+            //Conexão
+            mSession = new Session.Builder(this, API_Key, SESSION_ID).build();
             mSession.setSessionListener(VideoChamadaActivity.this);
-
             mSession.connect(TOKEN);
-        }
-        else
-        {
-            EasyPermissions.requestPermissions(this,"Precisamos da permissão da sua Camera e Microfone",RC_VIDEO_APP_PERM);
-        }
 
+        }else
+            {
+                EasyPermissions.requestPermissions(this, "Precisamos da permissão da sua Camera e Microfone, por favor permita", RC_VIDEO_APP_PERM, perms);
+            }
     }
 
     @Override
@@ -182,59 +180,57 @@ public class VideoChamadaActivity extends AppCompatActivity
 
     @Override
     public void onConnected(Session session) {
+        Log.i(TAG, "Conectado");
+        mPublisher = new Publisher.Builder(this).build();
+        mPublisher.setPublisherListener(VideoChamadaActivity.this);
 
-        Log.i(TAG, "Sessão Conectada");
+        mPublisherViewController.addView(mPublisher.getView());
 
-        mPublusher = new Publisher.Builder(this).build();
-        mPublusher.setPublisherListener(VideoChamadaActivity.this);
-
-        PubController.addView(mPublusher.getView());
-
-        if(mPublusher.getView()  instanceof GLSurfaceView)
+        if(mPublisher.getView() instanceof GLSurfaceView)
         {
-            ((GLSurfaceView) mPublusher.getView()).setZOrderOnTop(true);
+            ((GLSurfaceView) mPublisher.getView()).setZOrderOnTop(true);
         }
-        mSession.publish(mPublusher);
+
+        mSession.publish(mPublisher);
 
     }
 
     @Override
     public void onDisconnected(Session session) {
 
-        Log.i(TAG, "Desconectado\n");
+        Log.i(TAG, "Desconectado");
     }
 
     @Override
     public void onStreamReceived(Session session, Stream stream) {
-
-        Log.i(TAG, "Conectado\n");
+        Log.i(TAG, "Stream Recebido");
 
         if(mSubscriber == null)
         {
             mSubscriber = new Subscriber.Builder(this, stream).build();
             mSession.subscribe(mSubscriber);
-
-            SubController.addView(mSubscriber.getView());
-
+            mSubscriberViewController.addView(mSubscriber.getView());
         }
+
     }
 
     @Override
     public void onStreamDropped(Session session, Stream stream) {
 
-        Log.i(TAG, "Sua Conexão caiu\n");
+        Log.i(TAG, "Stream Excluido");
 
         if(mSubscriber != null)
         {
             mSubscriber = null;
-            SubController.removeAllViews();
+            mSubscriberViewController.removeAllViews();
         }
+
     }
 
     @Override
     public void onError(Session session, OpentokError opentokError) {
 
-        Log.i(TAG, "Ocorreu algum erro na sua Conexão\n");
+        Log.i(TAG, "Stream Erro");
     }
 
     @Override

@@ -177,8 +177,8 @@ public class RecycleView_Medicos extends AppCompatActivity {
                         {
                             calledBy = dataSnapshot.child("tocando").getValue().toString();
 
-                            Intent callingIntent = new Intent(getApplicationContext(), CallingActivity.class);
-                            callingIntent.putExtra("UID_MEDICO", calledBy);
+                            Intent callingIntent = new Intent(RecycleView_Medicos.this, CallingActivity.class);
+                            callingIntent.putExtra("UID_LIGACAO", calledBy);
                             startActivity(callingIntent);
                             finish();
                         }

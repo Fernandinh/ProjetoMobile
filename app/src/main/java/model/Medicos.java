@@ -13,7 +13,7 @@ public class Medicos {
     public Medicos() {
     }
 
-    public Medicos(String nome, String uid, String email, String senha, String tipo, String especialidade, String local, String imagem) {
+    public Medicos(String nome, String uid, String email, String senha, String tipo, String especialidade, String tocando, String local, String imagem) {
         Nome = nome;
         Uid = uid;
         Email = email;
@@ -71,6 +71,8 @@ public class Medicos {
     public void setEspecialidade(String especialidade) {
         Especialidade = especialidade;
     }
+
+
 
     public String getLocal() {
         return Local;

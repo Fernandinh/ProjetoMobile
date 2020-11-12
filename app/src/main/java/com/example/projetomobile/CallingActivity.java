@@ -28,17 +28,21 @@ public class CallingActivity extends AppCompatActivity {
     private ImageView Perfil;
     private ImageView BtnAtender;
     private ImageView BtnCancelar;
-    private String IdMedico = "";
-    private String ImagemMedico = "";
+
+    private String IdRecebendoLigacao = "";
+    private String NomeRecebendoLigacao = "";
+    private String ImagemRecebendoLigacao = "";
+
     private String callingId = "";
     private String ringningId = "";
-    private String NomeMedico = "";
-    private String IdUser = "";
+
+    private String FazendoLigacao_ID = "";
+    private String FazendoLigacaO_NOME = "";
+    private String FazendoLigacao_IMAGEM = "";
+
     private String Checker = "";
-    private String ImagemUser = "";
-    private String NomeUser = "";
-    private DatabaseReference MedicoRef;
     private MediaPlayer mediaPlayer;
+    private DatabaseReference MedicoRef;
     private FirebaseAuth mAuth;
 
 
@@ -50,13 +54,14 @@ public class CallingActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        IdUser = mAuth.getCurrentUser().getUid();
+        FazendoLigacao_ID = mAuth.getCurrentUser().getUid();
 
 
-        IdMedico = getIntent().getExtras().get("UID_MEDICO").toString();
+        IdRecebendoLigacao = getIntent().getExtras().get("UID_LIGACAO").toString();
         MedicoRef = FirebaseDatabase.getInstance().getReference().child("Usuário");
-        mediaPlayer = MediaPlayer.create(this, R.raw.toque);
 
+
+        mediaPlayer = MediaPlayer.create(this, R.raw.toque);
         Nome = findViewById(R.id.nome_calling);
         Perfil = findViewById(R.id.profile_image_calling);
         BtnAtender = findViewById(R.id.make_call);
@@ -65,60 +70,68 @@ public class CallingActivity extends AppCompatActivity {
         BtnCancelar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mediaPlayer.stop();
+
                 Checker = "clicked";
+
+                mediaPlayer.stop();
 
                 cancelarCallingUser();
             }
         });
 
-        BtnAtender.setOnClickListener(new View.OnClickListener() {
+       BtnAtender.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                mediaPlayer.stop();
                 final HashMap<String, Object> callingPickUp= new HashMap<>();
-                callingPickUp.put("selecionado", "selecionado");
+                callingPickUp.put("atendido", "atendido");
 
-                MedicoRef.child(IdUser).child("Tocando")
+                MedicoRef.child(FazendoLigacao_ID).child("Tocando")
                         .updateChildren(callingPickUp)
                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
 
-                                Intent VideoChamada = new Intent(CallingActivity.this, VideoChamadaActivity.class);
-                                startActivity(VideoChamada);
+                                if(task.isComplete())
+                                {
+                                  Intent VideoChamada = new Intent(CallingActivity.this, VideoChamadaActivity.class);
+                                    startActivity(VideoChamada);
+                                }
 
                             }
                         });
+
+
             }
         });
 
 
 
-        getAndSetMedicoProfile();
+        getAndSetUserProfile();
 
     }
 
-    private void getAndSetMedicoProfile() {
+
+    private void getAndSetUserProfile() {
 
         MedicoRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                if(dataSnapshot.child(IdMedico).exists())
+                if(dataSnapshot.child(IdRecebendoLigacao).exists())
                 {
-                    ImagemMedico = dataSnapshot.child(IdMedico).child("imagem").getValue().toString();
-                    NomeMedico = dataSnapshot.child(IdMedico).child("nome").getValue().toString();
+                    ImagemRecebendoLigacao = dataSnapshot.child(IdRecebendoLigacao).child("imagem").getValue().toString();
+                    NomeRecebendoLigacao = dataSnapshot.child(IdRecebendoLigacao).child("nome").getValue().toString();
 
-                    Nome.setText(NomeMedico);
-                    Picasso.get().load(ImagemMedico).placeholder(R.drawable.profile_image).into(Perfil);
+                    Nome.setText(NomeRecebendoLigacao);
+                    Picasso.get().load(ImagemRecebendoLigacao).placeholder(R.drawable.profile_image).into(Perfil);
+
                 }
 
-                if(dataSnapshot.child(IdUser).exists())
+                if(dataSnapshot.child(FazendoLigacao_ID).exists())
                 {
-                    ImagemUser = dataSnapshot.child(IdUser).child("imagem").getValue().toString();
-                    NomeUser = dataSnapshot.child(IdUser).child("nome").getValue().toString();
+                    FazendoLigacao_IMAGEM = dataSnapshot.child(FazendoLigacao_ID).child("imagem").getValue().toString();
+                    FazendoLigacaO_NOME = dataSnapshot.child(FazendoLigacao_ID).child("nome").getValue().toString();
                 }
 
             }
@@ -128,49 +141,45 @@ public class CallingActivity extends AppCompatActivity {
 
             }
         });
+
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        mediaPlayer.start();
-
-        MedicoRef.child(IdMedico)
-                .addValueEventListener(new ValueEventListener() {
+        MedicoRef.child(IdRecebendoLigacao)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                         if(!Checker.equals("clicked") && !dataSnapshot.hasChild("Ligando") && !dataSnapshot.hasChild("Tocando"))
                         {
-                            final HashMap<String, Object> callingInfo = new HashMap<>();
+                            final HashMap<String, Object> LigandoInfo = new HashMap<>();
 
-                            callingInfo.put("ligando", IdMedico);
-                            callingInfo.put("nome", NomeMedico);
+                            LigandoInfo.put("nome", NomeRecebendoLigacao);
+                            LigandoInfo.put("ligando", IdRecebendoLigacao);
 
-
-                            MedicoRef.child(IdUser)
-                                    .child("Ligando")
-                                    .updateChildren(callingInfo)
+                            MedicoRef.child(FazendoLigacao_ID).child("Ligando")
+                                    .updateChildren(LigandoInfo)
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
 
                                             if(task.isSuccessful())
                                             {
-                                                final HashMap<String, Object> tocandoInfo = new HashMap<>();
+                                                final HashMap<String, Object> TocandoInfo = new HashMap<>();
 
-                                                tocandoInfo.put("tocando", IdUser);
-                                                tocandoInfo.put("nome", NomeUser);
+                                                TocandoInfo.put("nome", FazendoLigacaO_NOME);
+                                                TocandoInfo.put("tocando", FazendoLigacao_ID);
 
-                                                MedicoRef.child(IdMedico)
-                                                        .child("Tocando")
-                                                        .updateChildren(tocandoInfo);
+                                                MedicoRef.child(IdRecebendoLigacao).child("Tocando")
+                                                        .updateChildren(TocandoInfo);
                                             }
                                         }
                                     });
-
                         }
+
                     }
 
                     @Override
@@ -179,19 +188,19 @@ public class CallingActivity extends AppCompatActivity {
                     }
                 });
 
+
         MedicoRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child(IdUser).hasChild("Tocando") && !dataSnapshot.child(IdUser).hasChild("Ligando"))
+
+                if(dataSnapshot.child(FazendoLigacao_ID).hasChild("Tocando") && !dataSnapshot.child(FazendoLigacao_ID).hasChild("Ligando"))
                 {
                     BtnAtender.setVisibility(View.VISIBLE);
                 }
 
-                if(dataSnapshot.child(IdMedico).child("Tocando").hasChild("selecionado"))
-                {
-                    mediaPlayer.stop();
-                    Intent VideoChamada = new Intent(CallingActivity.this, VideoChamadaActivity.class);
-                    startActivity(VideoChamada);
+                if(dataSnapshot.child(IdRecebendoLigacao).child("Tocando").hasChild("atendido")){
+                 Intent intent = new Intent(CallingActivity.this, VideoChamadaActivity.class);
+                 startActivity(intent);
                 }
             }
 
@@ -200,16 +209,17 @@ public class CallingActivity extends AppCompatActivity {
 
             }
         });
+
     }
     private void cancelarCallingUser() {
-
-        //Usuario ligando
-        MedicoRef.child(IdUser)
+        //Fazendo a Ligação
+        MedicoRef.child(FazendoLigacao_ID)
                 .child("Ligando")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists() && dataSnapshot.hasChild("ligando"))
+
+                        if(dataSnapshot.exists() && dataSnapshot.hasChild("ligando"))
                         {
                             callingId = dataSnapshot.child("ligando").getValue().toString();
 
@@ -222,22 +232,24 @@ public class CallingActivity extends AppCompatActivity {
 
                                             if(task.isSuccessful())
                                             {
-                                                MedicoRef.child(IdUser)
+                                                MedicoRef.child(FazendoLigacao_ID)
                                                         .child("Ligando")
                                                         .removeValue()
                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
 
-                                                                startActivity(new Intent(CallingActivity.this, RecycleView_Medicos.class));
+                                                                startActivity(new Intent(CallingActivity.this, MainActivity.class));
                                                                 finish();
+
                                                             }
                                                         });
                                             }
                                         }
                                     });
-                        }else{
-                            startActivity(new Intent(CallingActivity.this, RecycleView_Medicos.class));
+                        }else
+                        {
+                            startActivity(new Intent(CallingActivity.this, MainActivity.class));
                             finish();
                         }
 
@@ -249,15 +261,16 @@ public class CallingActivity extends AppCompatActivity {
                     }
                 });
 
-        //Medico recebendo
-        MedicoRef.child(IdUser)
+        //Recebendo a Ligação
+
+        MedicoRef.child(FazendoLigacao_ID)
                 .child("Tocando")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists() && dataSnapshot.hasChild("tocando"))
-                        {
 
+                        if(dataSnapshot.exists() && dataSnapshot.hasChild("tocando"))
+                        {
                             ringningId = dataSnapshot.child("tocando").getValue().toString();
 
                             MedicoRef.child(ringningId)
@@ -269,22 +282,24 @@ public class CallingActivity extends AppCompatActivity {
 
                                             if(task.isSuccessful())
                                             {
-                                                MedicoRef.child(IdUser)
+                                                MedicoRef.child(FazendoLigacao_ID)
                                                         .child("Tocando")
                                                         .removeValue()
                                                         .addOnCompleteListener(new OnCompleteListener<Void>() {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
 
-                                                                startActivity(new Intent(CallingActivity.this, RecycleView_Medicos.class));
+                                                                startActivity(new Intent(CallingActivity.this, MainActivity.class));
                                                                 finish();
+
                                                             }
                                                         });
                                             }
                                         }
                                     });
-                        }else{
-                            startActivity(new Intent(CallingActivity.this, RecycleView_Medicos.class));
+                        }else
+                        {
+                            startActivity(new Intent(CallingActivity.this, MainActivity.class));
                             finish();
                         }
 
@@ -297,4 +312,5 @@ public class CallingActivity extends AppCompatActivity {
                 });
 
     }
+
 }

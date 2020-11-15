@@ -4,6 +4,8 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,6 +36,7 @@ public class AdapterConsultasAntigas extends RecyclerView.Adapter<AdapterConsult
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
+        holder.Container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
         holder.diaa.setText(consultasAntigas.get(position).getData());
         holder.descricaoo.setText(consultasAntigas.get(position).getDescricao());
         holder.horarioo.setText(consultasAntigas.get(position).getHorario());
@@ -49,6 +52,7 @@ public class AdapterConsultasAntigas extends RecyclerView.Adapter<AdapterConsult
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
+        RelativeLayout Container;
         TextView diaa;
         TextView descricaoo;
         TextView horarioo;
@@ -58,6 +62,7 @@ public class AdapterConsultasAntigas extends RecyclerView.Adapter<AdapterConsult
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            Container = (RelativeLayout) itemView.findViewById(R.id.container);
             diaa = (TextView) itemView.findViewById(R.id.dia);
             descricaoo = (TextView) itemView.findViewById(R.id.descricao);
             horarioo = (TextView)itemView.findViewById(R.id.horario) ;

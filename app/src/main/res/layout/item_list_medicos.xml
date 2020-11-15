@@ -11,6 +11,7 @@
     tools:context=".ItemMedico">
 
     <RelativeLayout
+        android:id="@+id/container"
         android:layout_width="396dp"
         android:layout_height="255dp"
         android:padding="15dp">
@@ -48,8 +49,7 @@
             android:layout_marginTop="24dp"
             android:layout_toEndOf="@+id/foto"
             android:text="TextView"
-            android:textSize="20sp"
-            />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/Hospital"
@@ -60,8 +60,7 @@
             android:layout_marginTop="24dp"
             android:layout_toEndOf="@+id/foto"
             android:text="TextView"
-            android:textSize="20sp"
-             />
+            android:textSize="20sp" />
 
         <Button
             android:id="@+id/BtnMarcarConsulta"

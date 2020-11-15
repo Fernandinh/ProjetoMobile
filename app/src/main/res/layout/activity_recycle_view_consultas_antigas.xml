@@ -9,6 +9,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reciview"
+        android:layoutAnimation="@anim/layout_down_to_up"
         android:background="#75c7fb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

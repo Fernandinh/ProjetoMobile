@@ -4,7 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -41,6 +43,7 @@ public class AdapterConsultasMarcadas extends RecyclerView.Adapter<AdapterConsul
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
+        holder.Container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
         holder.nomee.setText(consultasMarcadas.get(position).getNome());
         holder.diaa.setText(consultasMarcadas.get(position).getData());
         holder.especialidadee.setText(consultasMarcadas.get(position).getEspecialidade());
@@ -57,6 +60,7 @@ public class AdapterConsultasMarcadas extends RecyclerView.Adapter<AdapterConsul
 
     class MyViewHolder extends RecyclerView.ViewHolder{
 
+        RelativeLayout Container;
         TextView nomee;
         TextView diaa;
         TextView especialidadee;
@@ -69,6 +73,7 @@ public class AdapterConsultasMarcadas extends RecyclerView.Adapter<AdapterConsul
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            Container = (RelativeLayout) itemView.findViewById(R.id.container);
             nomee = (TextView) itemView.findViewById(R.id.nomeeE);
             diaa = (TextView) itemView.findViewById(R.id.dia);
             especialidadee = (TextView) itemView.findViewById(R.id.descricao);

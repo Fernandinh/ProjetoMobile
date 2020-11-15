@@ -289,7 +289,7 @@ public class CallingActivity extends AppCompatActivity {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
 
-                                                                startActivity(new Intent(CallingActivity.this, MainActivity.class));
+                                                                startActivity(new Intent(CallingActivity.this, MedicoActivy.class));
                                                                 finish();
 
                                                             }
@@ -299,7 +299,7 @@ public class CallingActivity extends AppCompatActivity {
                                     });
                         }else
                         {
-                            startActivity(new Intent(CallingActivity.this, MainActivity.class));
+                            startActivity(new Intent(CallingActivity.this, MedicoActivy.class));
                             finish();
                         }
 

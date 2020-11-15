@@ -12,6 +12,7 @@
 
 
     <RelativeLayout
+        android:id="@+id/container"
         android:background="#FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -7,10 +7,12 @@ import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -57,6 +59,7 @@ public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewH
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
 
+        holder.Container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
         holder.Nome.setText(medicos.get(position).getNome());
         holder.Especialidade.setText(medicos.get(position).getEspecialidade());
         holder.Hospital.setText(medicos.get(position).getLocal());
@@ -135,6 +138,7 @@ public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewH
 
     class MyViewHolder extends RecyclerView.ViewHolder
     {
+        RelativeLayout Container;
         TextView Nome;
         TextView Especialidade;
         TextView Hospital;
@@ -145,6 +149,7 @@ public class AdapterMedicos extends  RecyclerView.Adapter<AdapterMedicos.MyViewH
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            Container = (RelativeLayout) itemView.findViewById(R.id.container);
             Nome = (TextView)itemView.findViewById(R.id.Nome);
             Especialidade = (TextView)itemView.findViewById(R.id.Especialidade);
             Hospital = (TextView)itemView.findViewById(R.id.Hospital);

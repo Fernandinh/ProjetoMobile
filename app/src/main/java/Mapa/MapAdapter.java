@@ -106,8 +106,4 @@ public class MapAdapter implements GoogleMap.InfoWindowAdapter, Filterable {
 
         }
     };
-
-
-
-
 }

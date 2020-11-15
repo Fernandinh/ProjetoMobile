@@ -5,6 +5,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -47,6 +49,7 @@ public class Login extends AppCompatActivity {
     private Button Forgot;
     private Query query;
     private  DatabaseReference dr;
+    private ProgressDialog mLoadingBar;
 
     private FirebaseAuth mAuth;
 
@@ -56,6 +59,7 @@ public class Login extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         mAuth = FirebaseAuth.getInstance();
+        mLoadingBar = new ProgressDialog(Login.this);
 
         Email = findViewById(R.id.EMAIL);
         Senha = findViewById(R.id.SENHA);
@@ -67,7 +71,7 @@ public class Login extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String email = Email.getText().toString();
+                String email = Email.getText().toString().trim();
                 String senha = Senha.getText().toString().trim();
                 User();
 
@@ -77,7 +81,7 @@ public class Login extends AppCompatActivity {
                     Email.setFocusable(true);
 
                 } else {
-                    UserLogin( email, senha, NomeUser, TipoUser);
+                    UserLogin( email, senha);
 
 
                 }
@@ -123,7 +127,15 @@ public class Login extends AppCompatActivity {
         }
     }
 
-    private void UserLogin( String email, String senha, String nome, String tipo) {
+    private void UserLogin( String email, String senha) {
+
+
+       /* mLoadingBar.setTitle("Login");
+        mLoadingBar.setMessage("Por favor aguarde enquanto verificamos sua credencial");
+        mLoadingBar.setCanceledOnTouchOutside(false);
+        mLoadingBar.show();
+
+        */
 
         mAuth.signInWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -132,45 +144,74 @@ public class Login extends AppCompatActivity {
 
                         if(task.isSuccessful())
                         {
-                            dr = FirebaseDatabase.getInstance().getReference().child("Usuário").child(mAuth.getCurrentUser().getUid());
-                            RecuperarDados( dr);
-                            Log.e(TAG, "fora"+ TipoUser);
+                            if(TipoUser  == "") {
 
-                            if(TipoUser.equals("user"))
-                            {
-                                Intent Main = new Intent(Login.this, MainActivity.class);
-                                Main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(Main);
-                                finish();
-                                Toast.makeText(Login.this, "Bem vindo " +NomeUser, Toast.LENGTH_SHORT).show();
+                                dr = FirebaseDatabase.getInstance().getReference().child("Usuário").child(mAuth.getCurrentUser().getUid());
+                                RecuperarDados(dr);
+                                Log.e(TAG, "fora" + TipoUser);
                             }
-                            else if(TipoUser.equals("doctor"))
-                            {
-                                Intent doctor = new Intent(Login.this, MedicoActivy.class);
-                                doctor.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(doctor);
-                                finish();
-                                Toast.makeText(Login.this, "Bem vindo " +NomeUser, Toast.LENGTH_SHORT).show();
-                            }
-                            else if(TipoUser.equals("admin"))
-                            {
-                                Intent Adm = new Intent(Login.this, AdminActivity.class);
-                                Adm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(Adm);
-                                finish();
-                                Toast.makeText(Login.this, "Bem vindo " +NomeUser, Toast.LENGTH_SHORT).show();
-                            }
+                            else {
 
-
+                                if (TipoUser.equals("user")) {
+                                    Intent Main = new Intent(Login.this, MainActivity.class);
+                                    Main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(Main);
+                                    finish();
+                                    Toast.makeText(Login.this, "Bem vindo " + NomeUser, Toast.LENGTH_SHORT).show();
+                                } else if (TipoUser.equals("doctor")) {
+                                    Intent doctor = new Intent(Login.this, MedicoActivy.class);
+                                    doctor.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(doctor);
+                                    finish();
+                                    Toast.makeText(Login.this, "Bem vindo " + NomeUser, Toast.LENGTH_SHORT).show();
+                                } else if (TipoUser.equals("admin")) {
+                                    Intent Adm = new Intent(Login.this, AdminActivity.class);
+                                    Adm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    startActivity(Adm);
+                                    finish();
+                                    Toast.makeText(Login.this, "Bem vindo " + NomeUser, Toast.LENGTH_SHORT).show();
+                                }
+                            }
 
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                mLoadingBar.dismiss();
                 Toast.makeText(Login.this, ""  + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void VerificarUser(String tipo, String nome) {
+        if(tipo.equals("user"))
+        {
+            mLoadingBar.dismiss();
+            Intent Main = new Intent(Login.this, MainActivity.class);
+            Main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(Main);
+            finish();
+            Toast.makeText(Login.this, "Bem vindo " +nome, Toast.LENGTH_SHORT).show();
+        }
+        else if(tipo.equals("doctor"))
+        {
+            mLoadingBar.dismiss();
+            Intent doctor = new Intent(Login.this, MedicoActivy.class);
+            doctor.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(doctor);
+            finish();
+            Toast.makeText(Login.this, "Bem vindo " +nome, Toast.LENGTH_SHORT).show();
+        }
+        else if(tipo.equals("admin"))
+        {
+            mLoadingBar.dismiss();
+            Intent Adm = new Intent(Login.this, AdminActivity.class);
+            Adm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(Adm);
+            finish();
+            Toast.makeText(Login.this, "Bem vindo " +nome, Toast.LENGTH_SHORT).show();
+        }
     }
 
 

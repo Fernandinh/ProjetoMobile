@@ -55,6 +55,7 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
     private ImageView LupaDiminuir;
     private float ZOOM = 14.5f;
     private DatabaseReference databaseReference;
+    private int MY_PERMISSION_REQUEST_READ_CONTACTS;
     Query queryy;
     ArrayList<MapModel> list;
     DatabaseReference dr;
@@ -70,6 +71,8 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        PermitirLocalizacao();
 
 
         list = new ArrayList<MapModel>();
@@ -278,5 +281,15 @@ public class MapaActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.animateCamera(CameraUpdateFactory.zoomBy(-1));
             }
         });
+    }
+
+    private void PermitirLocalizacao() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MapaActivity.this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    MY_PERMISSION_REQUEST_READ_CONTACTS);
+        }
     }
 }

@@ -4,7 +4,9 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -35,6 +37,7 @@ public class AdapterVacinas extends RecyclerView.Adapter<AdapterVacinas.MyViewHo
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
+        holder.Container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
         holder.nome.setText(vacinas.get(position).getNome());
         holder.descricao.setText(vacinas.get(position).getDescricao());
         holder.indicacao.setText(vacinas.get(position).getIndicacao());
@@ -49,6 +52,7 @@ public class AdapterVacinas extends RecyclerView.Adapter<AdapterVacinas.MyViewHo
     class MyViewHolder extends RecyclerView.ViewHolder
     {
 
+        RelativeLayout Container;
         TextView nome;
         TextView descricao;
         TextView indicacao;
@@ -57,6 +61,7 @@ public class AdapterVacinas extends RecyclerView.Adapter<AdapterVacinas.MyViewHo
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            Container = (RelativeLayout) itemView.findViewById(R.id.container);
             nome = (TextView)itemView.findViewById(R.id.nome);
             descricao = (TextView)itemView.findViewById(R.id.descrica);
             indicacao = (TextView)itemView.findViewById(R.id.indicacao);

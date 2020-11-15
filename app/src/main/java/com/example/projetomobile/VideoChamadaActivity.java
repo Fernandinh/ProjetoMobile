@@ -88,7 +88,7 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoChamadaActivity.this, MainActivity.class));
+                            startActivity(new Intent(VideoChamadaActivity.this, RecycleView_Medicos.class));
                             finish();
                         }
                         if(dataSnapshot.child(UserId).hasChild("Ligando"))
@@ -105,7 +105,7 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoChamadaActivity.this, MainActivity.class));
+                            startActivity(new Intent(VideoChamadaActivity.this, RecycleView_Medicos.class));
                             finish();
                         }
                         else
@@ -120,7 +120,7 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoChamadaActivity.this, MainActivity.class));
+                            startActivity(new Intent(VideoChamadaActivity.this, RecycleView_Medicos.class));
                             finish();
                         }
                     }

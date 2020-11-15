@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -192,131 +195,15 @@ public class RecycleView_Medicos extends AppCompatActivity {
                 });
 
     }
-
-    /*
-    @Override
-    protected void onStart() {
-        super.onStart();
-        //RecebendoLigacao();
-
-        FirebaseRecyclerOptions<Medicos> options
-                = new FirebaseRecyclerOptions.Builder<Medicos>()
-                .setQuery(MedicoReference.child(currentUserId), Medicos.class)
-                .build();
-
-        FirebaseRecyclerAdapter<Medicos,MedicosViewHolder> firebaseRecyclerAdapter
-                 = new FirebaseRecyclerAdapter<Medicos, MedicosViewHolder>(options) {
-            @Override
-            protected void onBindViewHolder(@NonNull final MedicosViewHolder holder, int position, @NonNull Medicos model) {
-                final String listUserId = getRef(position).getKey();
-
-                MedicoReference.child(listUserId).addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        if(dataSnapshot.exists())
-                        {
-                            userNome = dataSnapshot.child("nome").getValue().toString();
-                            userImagem = dataSnapshot.child("imagem").getValue().toString();
-                            userEspecialidade = dataSnapshot.child("especialidade").getValue().toString();
-                            userLocal = dataSnapshot.child("local").getValue().toString();
-
-                            holder.Nome.setText(userNome);
-                            Picasso.get().load(userImagem).into(holder.Img);
-                            holder.Especialidade.setText(userEspecialidade);
-                            holder.Hospital.setText(userLocal);
-
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-
-            @NonNull
-            @Override
-            public MedicosViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_list_medicos, parent,false);
-                MedicosViewHolder viewHolder = new MedicosViewHolder(view);
-                return  viewHolder;
-            }
-        };
-        myMedicoList.setAdapter(firebaseRecyclerAdapter);
-        firebaseRecyclerAdapter.startListening();
-    }
-
-    private void ValidateUser()
+    private  void LayoutAnimation(RecyclerView recyclerView)
     {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
-        reference.child("Usuário").child(mAuth.getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        Context context = recyclerView.getContext();
+        LayoutAnimationController layoutAnimationController =
+                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_slide_right);
 
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                Intent settingIntent = new Intent(RecycleView_Medicos.this, MainActivity.class);
-                startActivity(settingIntent);
-                finish();
-
-            }
-        });
-    }
-
-    private void RecebendoLigacao()
-    {
-
-        MedicoRef.child(mAuth.getCurrentUser().getUid())
-                .child("Tocando")
-                .addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                        if(dataSnapshot.hasChild("tocando"))
-                        {
-                            calledBy = dataSnapshot.child("tocando").getValue().toString();
-
-                            Intent callingIntent = new Intent(getApplicationContext(), CallingActivity.class);
-                            callingIntent.putExtra("UID_MEDICO", calledBy);
-                            startActivity(callingIntent);
-                        }
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+        recyclerView.setLayoutAnimation(layoutAnimationController);
+        recyclerView.getAdapter().notifyDataSetChanged();
+        recyclerView.scheduleLayoutAnimation();
 
     }
-    class MedicosViewHolder extends RecyclerView.ViewHolder {
-        TextView Nome;
-        TextView Especialidade;
-        TextView Hospital;
-        ImageView Img;
-        Button Consultaa;
-        Button Video;
-
-        public MedicosViewHolder(@NonNull View itemView) {
-            super(itemView);
-
-            Nome = (TextView) itemView.findViewById(R.id.Nome);
-            Especialidade = (TextView) itemView.findViewById(R.id.Especialidade);
-            Hospital = (TextView) itemView.findViewById(R.id.Hospital);
-            Img = (ImageView) itemView.findViewById(R.id.FotO);
-            Consultaa = (Button) itemView.findViewById(R.id.BtnMarcarConsulta);
-            Video = (Button) itemView.findViewById(R.id.VideoCall);
-
-        }
-    }
-
-     */
 }

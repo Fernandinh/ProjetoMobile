@@ -18,6 +18,7 @@ import com.github.rtoshiro.util.format.text.MaskTextWatcher;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthResult;
@@ -28,7 +29,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
+import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import model.Usuario;
@@ -147,7 +152,6 @@ public class Cadastro extends AppCompatActivity {
         {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             imageUri = result.getUri();
-
             profileImg.setImageURI(imageUri);
         }
         else
@@ -185,7 +189,17 @@ public class Cadastro extends AppCompatActivity {
 
                         database = FirebaseDatabase.getInstance();
                         myRef = database.getReference("Usuário");
-                        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("imagem").setValue(myUri);
+                        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("imagem").setValue(myUri)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        String link = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYMbrvQyU5UD3uHsccpkfanFWLzPSl2wJg0g&usqp=CAU";
+
+                                        Picasso.get().load(link).into(profileImg);
+
+
+                                    }
+                                });
 
                     }
                 }
@@ -254,9 +268,34 @@ public class Cadastro extends AppCompatActivity {
         usuario.setCpf(cpf);
         usuario.setDtsnc(dtnsc);
 
+        /*Map<String,Object> CadastrarUser = new HashMap<>();
+
+        CadastrarUser.put("nome", nome);
+        CadastrarUser.put("tipo", "user");
+        CadastrarUser.put("uid", uid);
+        CadastrarUser.put("email", email);
+        CadastrarUser.put("senha", senha);
+        CadastrarUser.put("cpf", cpf);
+        CadastrarUser.put("dtnsc", dtnsc);
+
+         */
+
+
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference("Usuário");
-        myRef.child(uid).setValue(usuario);
+        myRef.child(uid).setValue(usuario)
+               .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+
+                        Nome.setText("");
+                        Email.setText("");
+                        Senha.setText("");
+                        Cpf.setText("");
+                        Dtns.setText("");
+                    }
+                });
+
 
         Toast.makeText(Cadastro.this,"Cadastrando "+nome,Toast.LENGTH_SHORT).show();
 

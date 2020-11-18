@@ -58,7 +58,7 @@ public class add_consultas_antigas extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        dia.setText("");;
+                        dia.setText("");
                         descricao.setText("");
                         horario.setText("");
 

@@ -44,6 +44,11 @@ public class RecyclerView_Consultas_Marcadas extends AppCompatActivity {
     FirebaseDatabase database;
     ArrayList<ConsultasMarcadas> list;
     AdapterConsultasMarcadas adapter;
+    String today;
+    String dataConsulta;
+    Date todayDate;
+    Date ConsultaDate;
+
 
 
     @Override
@@ -56,12 +61,14 @@ public class RecyclerView_Consultas_Marcadas extends AppCompatActivity {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-        String today = DateFormat.getDateInstance(SimpleDateFormat.DATE_FIELD).format(calendar.getTime());
+         today = DateFormat.getDateInstance(SimpleDateFormat.DATE_FIELD).format(calendar.getTime());
+        try {
+            todayDate = dateFormat.parse("09/11/2020");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         //date.setText(today);
-
-
-
-
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
@@ -85,9 +92,19 @@ public class RecyclerView_Consultas_Marcadas extends AppCompatActivity {
                 list.clear();
                 for(DataSnapshot dataSnapshot: snapshot.getChildren())
                 {
-                    String data = dataSnapshot.child("Data").getValue().toString();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+                    dataConsulta = dataSnapshot.child("Data").getValue().toString();
+                    try {
+                        ConsultaDate = dateFormat.parse("17/11/2020");
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                     ConsultasMarcadas c = dataSnapshot.getValue(ConsultasMarcadas.class);
                     list.add(c);
+
+                    //date.setText(dataConsulta);
+
+
                 }
 
                 adapter = new AdapterConsultasMarcadas(RecyclerView_Consultas_Marcadas.this, list);
@@ -101,6 +118,8 @@ public class RecyclerView_Consultas_Marcadas extends AppCompatActivity {
             }
         });
 
+        //if ( todayDate.compareTo(ConsultaDate) < 1 )
+
         FloatingActionButton fb = (FloatingActionButton) findViewById(R.id.marcadas);
         fb.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,15 +130,5 @@ public class RecyclerView_Consultas_Marcadas extends AppCompatActivity {
         });
     }
 
-    private  void LayoutAnimation(RecyclerView recyclerView)
-    {
-        Context context = recyclerView.getContext();
-        LayoutAnimationController layoutAnimationController =
-                AnimationUtils.loadLayoutAnimation(context, R.anim.layout_fall_down);
 
-        recyclerView.setLayoutAnimation(layoutAnimationController);
-        recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scheduleLayoutAnimation();
-
-    }
 }

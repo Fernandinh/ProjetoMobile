@@ -6,15 +6,17 @@ public class Vacinas {
     private String Descricao;
     private String Indicacao;
     private String Imagem;
+    private String Video;
 
     public Vacinas() {
     }
 
-    public Vacinas(String nome, String descricao, String indicacao, String imagem) {
+    public Vacinas(String nome, String descricao, String indicacao, String imagem, String video) {
         Nome = nome;
         Descricao = descricao;
         Indicacao = indicacao;
         Imagem = imagem;
+        Video = video;
     }
 
     public String getNome() {
@@ -47,5 +49,13 @@ public class Vacinas {
 
     public void setImagem(String imagem) {
         Imagem = imagem;
+    }
+
+    public String getVideo() {
+        return Video;
+    }
+
+    public void setVideo(String video) {
+        Video = video;
     }
 }

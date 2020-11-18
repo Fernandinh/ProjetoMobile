@@ -66,6 +66,7 @@ public class MarcarConsulta extends AppCompatActivity {
     Context context;
     Dialog dialog;
     String dateString;
+    String ImgPaciente;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,8 +158,12 @@ public class MarcarConsulta extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 String NomeUser = dataSnapshot.child("nome").getValue().toString();
+                ImgPaciente = dataSnapshot.child("imagem").getValue().toString();
                 Nome.setText(NomeUser);
                 DesabilitarHeditText(Nome);
+
+
+
 
             }
 
@@ -278,10 +283,11 @@ public class MarcarConsulta extends AppCompatActivity {
         Map<String,Object> map = new HashMap<>();
 
         map.put("Nome",Nome.getText().toString());
+        map.put("FotoPaciente",ImgPaciente);
         map.put("Email", user.getEmail());
         map.put("Medico", Medico.getText().toString());
         map.put("Especialidade", Especialidade.getText().toString());
-        map.put("Data", Data.getText().toString());
+        map.put("Data", dateString);
         map.put("Hora", Hora.getText().toString());
         map.put("Local", Local.getText().toString());
 
@@ -294,7 +300,7 @@ public class MarcarConsulta extends AppCompatActivity {
             map.put("Foto", "https://saudebusiness.com/wp-content/uploads/2017/05/pediatra.jpg");
         }
 
-        FirebaseDatabase.getInstance().getReference().child("Consultas Marcadas").push()
+        FirebaseDatabase.getInstance().getReference().child("Consultas Marcadas").child(mAuth.getCurrentUser().getUid())
                 .setValue(map)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override

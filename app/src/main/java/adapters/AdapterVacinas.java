@@ -8,6 +8,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,7 +44,6 @@ public class AdapterVacinas extends RecyclerView.Adapter<AdapterVacinas.MyViewHo
         holder.indicacao.setText(vacinas.get(position).getIndicacao());
         Picasso.get().load(vacinas.get(position).getImagem()).into(holder.img);
     }
-
     @Override
     public int getItemCount() {
         return vacinas.size();
@@ -57,15 +57,17 @@ public class AdapterVacinas extends RecyclerView.Adapter<AdapterVacinas.MyViewHo
         TextView descricao;
         TextView indicacao;
         ImageView img;
+        VideoView video;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            Container = (RelativeLayout) itemView.findViewById(R.id.container);
-            nome = (TextView)itemView.findViewById(R.id.nome);
-            descricao = (TextView)itemView.findViewById(R.id.descrica);
-            indicacao = (TextView)itemView.findViewById(R.id.indicacao);
-            img = (ImageView)itemView.findViewById(R.id.ftt);
+            Container = itemView.findViewById(R.id.container);
+            nome = itemView.findViewById(R.id.nome);
+            descricao = itemView.findViewById(R.id.descrica);
+            indicacao = itemView.findViewById(R.id.indicacao);
+            img = itemView.findViewById(R.id.ftt);
+
         }
     }
 

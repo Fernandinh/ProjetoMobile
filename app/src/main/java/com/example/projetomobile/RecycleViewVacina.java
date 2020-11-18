@@ -2,12 +2,14 @@ package com.example.projetomobile;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.GridLayout;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -49,6 +51,12 @@ public class RecycleViewVacina extends AppCompatActivity {
                 }
                 adapter = new AdapterVacinas(RecycleViewVacina.this, list);
                 recview.setAdapter(adapter);
+
+             //   LinearLayoutManager layoutManager = new LinearLayoutManager(RecycleViewVacina.this, LinearLayoutManager.HORIZONTAL, false);
+              //  recview.setLayoutManager(layoutManager);]
+
+                GridLayoutManager gridLayoutManager = new GridLayoutManager(RecycleViewVacina.this, 2);
+                recview.setLayoutManager(gridLayoutManager);
 
             }
 

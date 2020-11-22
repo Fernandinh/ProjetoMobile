@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -17,15 +19,21 @@ import com.example.projetomobile.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import model.ConsultasMarcadas;
 import model.Vacinas;
 
-public class AdapterVacinas extends RecyclerView.Adapter<AdapterVacinas.MyViewHolder>{
+public class AdapterVacinas extends RecyclerView.Adapter<AdapterVacinas.MyViewHolder> implements Filterable {
     Context context;
     ArrayList<Vacinas> vacinas;
+    ArrayList<Vacinas> list;
 
     public AdapterVacinas(Context context, ArrayList<Vacinas> vacinas) {
         this.context = context;
         this.vacinas = vacinas;
+        list = new ArrayList<>(vacinas);
     }
 
     @NonNull
@@ -49,6 +57,46 @@ public class AdapterVacinas extends RecyclerView.Adapter<AdapterVacinas.MyViewHo
         return vacinas.size();
     }
 
+    @Override
+    public Filter getFilter() {
+        return FiltroVacinas;
+    }
+
+    private  Filter FiltroVacinas = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            String searchText = constraint.toString().toLowerCase();
+            List<Vacinas> tempList = new ArrayList<>();
+
+            if(searchText.length() == 0 || searchText.isEmpty())
+            {
+                tempList.addAll(list);
+
+            }
+            else
+            {
+                for (Vacinas item: list)
+                {
+                    if(item.getNome().toLowerCase().contains(searchText))
+                    {
+                        tempList.add(item);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = tempList;
+            return  filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults filterResults) {
+            vacinas.clear();
+            vacinas.addAll((Collection<? extends Vacinas>) filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
+
     class MyViewHolder extends RecyclerView.ViewHolder
     {
 
@@ -67,7 +115,6 @@ public class AdapterVacinas extends RecyclerView.Adapter<AdapterVacinas.MyViewHo
             descricao = itemView.findViewById(R.id.descrica);
             indicacao = itemView.findViewById(R.id.indicacao);
             img = itemView.findViewById(R.id.ftt);
-
         }
     }
 

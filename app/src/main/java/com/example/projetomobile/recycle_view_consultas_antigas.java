@@ -8,9 +8,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -62,7 +65,7 @@ public class recycle_view_consultas_antigas extends AppCompatActivity {
         list= new ArrayList<ConsultasAntigas>();
 
         dr = FirebaseDatabase.getInstance().getReference().child("Consultas Finalizadas");
-        Query query = dr.orderByChild("Email").equalTo(user.getEmail());
+        Query query = dr.orderByChild("Uid").equalTo(user.getUid());
 
         final ValueEventListener erro = query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -107,5 +110,25 @@ public class recycle_view_consultas_antigas extends AppCompatActivity {
         recyclerView.getAdapter().notifyDataSetChanged();
         recyclerView.scheduleLayoutAnimation();
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.search_remedio,menu);
+        MenuItem menuItem = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) menuItem.getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                adapter.getFilter().filter(s.toString());
+                return false;
+            }
+        });
+        return super.onCreateOptionsMenu(menu);
     }
 }

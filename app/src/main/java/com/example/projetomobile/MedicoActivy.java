@@ -46,7 +46,7 @@ public class MedicoActivy extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        RecebendoLigacao();
+       // RecebendoLigacao();
     }
 
     private void RecebendoLigacao()

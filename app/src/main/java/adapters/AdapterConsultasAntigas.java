@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -13,18 +15,23 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.projetomobile.R;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import model.ConsultasAntigas;
+import model.ConsultasMarcadas;
 
-public class AdapterConsultasAntigas extends RecyclerView.Adapter<AdapterConsultasAntigas.MyViewHolder> {
+public class AdapterConsultasAntigas extends RecyclerView.Adapter<AdapterConsultasAntigas.MyViewHolder> implements Filterable {
 
     Context context;
     List<ConsultasAntigas> consultasAntigas;
+    ArrayList<ConsultasAntigas> list;
 
     public AdapterConsultasAntigas(Context context, List<ConsultasAntigas> consultasAntigas) {
         this.context = context;
         this.consultasAntigas = consultasAntigas;
+        list = new ArrayList<>(consultasAntigas);
     }
 
     @NonNull
@@ -49,6 +56,46 @@ public class AdapterConsultasAntigas extends RecyclerView.Adapter<AdapterConsult
     public int getItemCount() {
         return consultasAntigas.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return FiltroConsultasAntigas;
+    }
+    private  Filter FiltroConsultasAntigas = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            String searchText = constraint.toString().toLowerCase();
+            List<ConsultasAntigas> tempList = new ArrayList<>();
+
+            if(searchText.length() == 0 || searchText.isEmpty())
+            {
+                tempList.addAll(list);
+
+            }
+            else
+            {
+                for (ConsultasAntigas item: list)
+                {
+                    if(item.getDoutor().toLowerCase().contains(searchText) || item.getLocal().toLowerCase().contains(searchText))
+                    {
+                        tempList.add(item);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = tempList;
+            return  filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults filterResults) {
+            consultasAntigas.clear();
+            consultasAntigas.addAll((Collection<? extends ConsultasAntigas>) filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
+
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 

@@ -381,7 +381,7 @@ public class Perfil extends AppCompatActivity {
 
 
 
-        AlertDialog.Builder Atualizar = new AlertDialog.Builder(Perfil.this);
+        final AlertDialog.Builder Atualizar = new AlertDialog.Builder(Perfil.this);
         Atualizar.setView(view);
 
 
@@ -449,6 +449,7 @@ public class Perfil extends AppCompatActivity {
                             });
 
                     Toast.makeText(Perfil.this, " Atualização Realizada com Sucesso !\n", Toast.LENGTH_SHORT).show();
+
 
 
             }

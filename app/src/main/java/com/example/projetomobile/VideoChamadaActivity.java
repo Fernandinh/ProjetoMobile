@@ -74,6 +74,9 @@ public class VideoChamadaActivity extends AppCompatActivity
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+                       String  TipoUser = dataSnapshot.child(UserId).child("tipo").getValue().toString();
+
+
                         if(dataSnapshot.child(UserId).hasChild("Tocando"))
                         {
                             dr.child(UserId).child("Tocando").removeValue();
@@ -88,7 +91,7 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoChamadaActivity.this, RecycleView_Medicos.class));
+                            startActivity(new Intent(VideoChamadaActivity.this, MainActivity.class));
                             finish();
                         }
                         if(dataSnapshot.child(UserId).hasChild("Ligando"))
@@ -105,11 +108,13 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoChamadaActivity.this, RecycleView_Medicos.class));
+                            startActivity(new Intent(VideoChamadaActivity.this, RecycleViewVacina.class));
                             finish();
                         }
                         else
                         {
+                            Log.e(TAG, "dentro"+ TipoUser);
+
                             if(mPublisher != null)
                             {
                                 mPublisher.destroy();
@@ -120,8 +125,18 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoChamadaActivity.this, RecycleView_Medicos.class));
-                            finish();
+                            if(TipoUser.equals("doctor"))
+                            {
+                                startActivity(new Intent(VideoChamadaActivity.this, MedicoActivy.class));
+                                finish();
+                            }
+
+                            else if(TipoUser.equals("user"))
+                            {
+                                startActivity(new Intent(VideoChamadaActivity.this, MainActivity.class));
+                                finish();
+                            }
+
                         }
                     }
 
@@ -203,7 +218,7 @@ public class VideoChamadaActivity extends AppCompatActivity
 
     @Override
     public void onStreamReceived(Session session, Stream stream) {
-        Log.i(TAG, "Stream Recebido");
+        Log.i(TAG, "Stream Recebida");
 
         if(mSubscriber == null)
         {

@@ -41,13 +41,9 @@ public class Login extends AppCompatActivity {
     private EditText Email;
     private EditText Senha;
     private String NomeUser = "";
-    private String TipoDoctor = "";
-    private String TipoAdm = "";
     private String TipoUser = "";
-    private EditText Voltar;
     private Button Logar;
     private Button Forgot;
-    private Query query;
     private  DatabaseReference dr;
     private ProgressDialog mLoadingBar;
 
@@ -129,13 +125,10 @@ public class Login extends AppCompatActivity {
 
     private void UserLogin( String email, String senha) {
 
-
-       /* mLoadingBar.setTitle("Login");
+        mLoadingBar.setTitle("Login");
         mLoadingBar.setMessage("Por favor aguarde enquanto verificamos sua credencial");
         mLoadingBar.setCanceledOnTouchOutside(false);
         mLoadingBar.show();
-
-        */
 
         mAuth.signInWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -147,32 +140,8 @@ public class Login extends AppCompatActivity {
                             if(TipoUser  == "") {
 
                                 dr = FirebaseDatabase.getInstance().getReference().child("Usuário").child(mAuth.getCurrentUser().getUid());
-                                RecuperarDados(dr);
-                                Log.e(TAG, "fora" + TipoUser);
+                                VerificarUsuario(dr);
                             }
-                            else {
-
-                                if (TipoUser.equals("user")) {
-                                    Intent Main = new Intent(Login.this, MainActivity.class);
-                                    Main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(Main);
-                                    finish();
-                                    Toast.makeText(Login.this, "Bem vindo " + NomeUser, Toast.LENGTH_SHORT).show();
-                                } else if (TipoUser.equals("doctor")) {
-                                    Intent doctor = new Intent(Login.this, MedicoActivy.class);
-                                    doctor.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(doctor);
-                                    finish();
-                                    Toast.makeText(Login.this, "Bem vindo " + NomeUser, Toast.LENGTH_SHORT).show();
-                                } else if (TipoUser.equals("admin")) {
-                                    Intent Adm = new Intent(Login.this, AdminActivity.class);
-                                    Adm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                    startActivity(Adm);
-                                    finish();
-                                    Toast.makeText(Login.this, "Bem vindo " + NomeUser, Toast.LENGTH_SHORT).show();
-                                }
-                            }
-
                         }
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -184,48 +153,40 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private void VerificarUser(String tipo, String nome) {
-        if(tipo.equals("user"))
-        {
-            mLoadingBar.dismiss();
-            Intent Main = new Intent(Login.this, MainActivity.class);
-            Main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(Main);
-            finish();
-            Toast.makeText(Login.this, "Bem vindo " +nome, Toast.LENGTH_SHORT).show();
-        }
-        else if(tipo.equals("doctor"))
-        {
-            mLoadingBar.dismiss();
-            Intent doctor = new Intent(Login.this, MedicoActivy.class);
-            doctor.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(doctor);
-            finish();
-            Toast.makeText(Login.this, "Bem vindo " +nome, Toast.LENGTH_SHORT).show();
-        }
-        else if(tipo.equals("admin"))
-        {
-            mLoadingBar.dismiss();
-            Intent Adm = new Intent(Login.this, AdminActivity.class);
-            Adm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(Adm);
-            finish();
-            Toast.makeText(Login.this, "Bem vindo " +nome, Toast.LENGTH_SHORT).show();
-        }
-    }
+    private void VerificarUsuario(DatabaseReference dr) {
 
-
-    private void RecuperarDados(DatabaseReference dr) {
-
-        dr.addValueEventListener(new ValueEventListener() {
+        DatabaseReference mDatabase;
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child("Usuário").child(mAuth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
                 TipoUser = dataSnapshot.child("tipo").getValue().toString();
                 NomeUser = dataSnapshot.child("nome").getValue().toString();
-                Log.e(TAG, "dentro"+ TipoUser);
-            }
+                if (TipoUser.equals("user")) {
+                    mLoadingBar.dismiss();
+                    Intent Main = new Intent(Login.this, MainActivity.class);
+                    Main.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(Main);
+                    finish();
+                    Toast.makeText(Login.this, "Bem vindo " + NomeUser, Toast.LENGTH_SHORT).show();
 
+                } else if (TipoUser.equals("doctor")) {
+                    mLoadingBar.dismiss();
+                    Intent doctor = new Intent(Login.this, MedicoActivy.class);
+                    doctor.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(doctor);
+                    finish();
+                    Toast.makeText(Login.this, "Bem vindo " + NomeUser, Toast.LENGTH_SHORT).show();
+
+                } else if (TipoUser.equals("admin")) {
+                    mLoadingBar.dismiss();
+                    Intent Adm = new Intent(Login.this, AdminActivity.class);
+                    Adm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(Adm);
+                    finish();
+                    Toast.makeText(Login.this, "Bem vindo " + NomeUser, Toast.LENGTH_SHORT).show();
+                }
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

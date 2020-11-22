@@ -63,8 +63,6 @@ public class Cadastro extends AppCompatActivity {
     private static final int Gallery_Intent = 1;
     private Usuario usuario;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -189,18 +187,15 @@ public class Cadastro extends AppCompatActivity {
 
                         database = FirebaseDatabase.getInstance();
                         myRef = database.getReference("Usuário");
-                        myRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("imagem").setValue(myUri)
+                        myRef.child(mAuth.getCurrentUser().getUid()).child("imagem").setValue(myUri)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         String link = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYMbrvQyU5UD3uHsccpkfanFWLzPSl2wJg0g&usqp=CAU";
 
                                         Picasso.get().load(link).into(profileImg);
-
-
                                     }
                                 });
-
                     }
                 }
             });
@@ -210,7 +205,6 @@ public class Cadastro extends AppCompatActivity {
             Toast.makeText(Cadastro.this, "Nenhuma Imagem foi selecionada", LENGTH_SHORT).show();
         }
     }
-
 
     public void voltarteladeinicio (View view){
 

@@ -5,6 +5,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,20 +20,25 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Text;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
 import model.ConsultasMarcadas;
+import model.Medicos;
 
-public class AdapterConsultasMarcadas extends RecyclerView.Adapter<AdapterConsultasMarcadas.MyViewHolder> {
+public class AdapterConsultasMarcadas extends RecyclerView.Adapter<AdapterConsultasMarcadas.MyViewHolder> implements Filterable {
 
     Context context;
     List<ConsultasMarcadas> consultasMarcadas;
+    ArrayList<ConsultasMarcadas> list;
 
 
     public AdapterConsultasMarcadas(Context context, List<ConsultasMarcadas> consultasMarcadas) {
         this.context = context;
         this.consultasMarcadas = consultasMarcadas;
+        list = new ArrayList<>(consultasMarcadas);
     }
 
     @NonNull
@@ -57,6 +64,45 @@ public class AdapterConsultasMarcadas extends RecyclerView.Adapter<AdapterConsul
     public int getItemCount() {
         return consultasMarcadas.size();
     }
+
+    @Override
+    public Filter getFilter() {
+        return FiltroConsultasMarcadas;
+    }
+    private  Filter FiltroConsultasMarcadas = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            String searchText = constraint.toString().toLowerCase();
+            List<ConsultasMarcadas> tempList = new ArrayList<>();
+
+            if(searchText.length() == 0 || searchText.isEmpty())
+            {
+                tempList.addAll(list);
+
+            }
+            else
+            {
+                for (ConsultasMarcadas item: list)
+                {
+                    if(item.getMedico().toLowerCase().contains(searchText) || item.getLocal().toLowerCase().contains(searchText))
+                    {
+                        tempList.add(item);
+                    }
+                }
+            }
+            FilterResults filterResults = new FilterResults();
+            filterResults.values = tempList;
+            return  filterResults;
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults filterResults) {
+            consultasMarcadas.clear();
+            consultasMarcadas.addAll((Collection<? extends ConsultasMarcadas>) filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
 
     class MyViewHolder extends RecyclerView.ViewHolder{
 

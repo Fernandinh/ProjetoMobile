@@ -159,6 +159,7 @@ public class CallingActivity extends AppCompatActivity {
 
                             LigandoInfo.put("nome", NomeRecebendoLigacao);
                             LigandoInfo.put("ligando", IdRecebendoLigacao);
+                            LigandoInfo.put("tipo", "user");
 
                             MedicoRef.child(FazendoLigacao_ID).child("Ligando")
                                     .updateChildren(LigandoInfo)
@@ -172,6 +173,7 @@ public class CallingActivity extends AppCompatActivity {
 
                                                 TocandoInfo.put("nome", FazendoLigacaO_NOME);
                                                 TocandoInfo.put("tocando", FazendoLigacao_ID);
+                                                TocandoInfo.put("tipo", "doctor");
 
                                                 MedicoRef.child(IdRecebendoLigacao).child("Tocando")
                                                         .updateChildren(TocandoInfo);
@@ -199,7 +201,7 @@ public class CallingActivity extends AppCompatActivity {
                 }
 
                 if(dataSnapshot.child(IdRecebendoLigacao).child("Tocando").hasChild("atendido")){
-                 Intent intent = new Intent(CallingActivity.this, VideoChamadaActivity.class);
+                    Intent intent = new Intent(CallingActivity.this, VideoChamadaActivity.class);
                  startActivity(intent);
                 }
             }
@@ -239,7 +241,7 @@ public class CallingActivity extends AppCompatActivity {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
 
-                                                                startActivity(new Intent(CallingActivity.this, MedicoActivy.class));
+                                                                startActivity(new Intent(CallingActivity.this, RecycleView_Medicos.class));
                                                                 finish();
 
                                                             }
@@ -249,7 +251,7 @@ public class CallingActivity extends AppCompatActivity {
                                     });
                         }else
                         {
-                            startActivity(new Intent(CallingActivity.this, RecycleView_Medicos.class));
+                            startActivity(new Intent(CallingActivity.this, MedicoActivy.class));
                             finish();
                         }
 

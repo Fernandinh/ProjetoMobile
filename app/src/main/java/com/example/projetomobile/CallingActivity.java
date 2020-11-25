@@ -75,7 +75,7 @@ public class CallingActivity extends AppCompatActivity {
 
                 mediaPlayer.stop();
 
-                cancelarCallingUser();
+
             }
         });
 

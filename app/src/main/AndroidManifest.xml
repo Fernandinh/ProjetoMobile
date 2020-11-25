@@ -24,6 +24,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".addVacinaUBS"></activity>
         <activity android:name=".RecyclerView_AgendaMedico">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

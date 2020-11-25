@@ -1,8 +1,11 @@
 package model;
 
+import android.widget.Button;
+
 public class Vacinas {
 
     private String Nome;
+    private String Uid;
     private String Descricao;
     private String Indicacao;
     private String Imagem;
@@ -11,8 +14,9 @@ public class Vacinas {
     public Vacinas() {
     }
 
-    public Vacinas(String nome, String descricao, String indicacao, String imagem, String video) {
+    public Vacinas(String nome, String uid, String descricao, String indicacao, String imagem, String video) {
         Nome = nome;
+        Uid = uid;
         Descricao = descricao;
         Indicacao = indicacao;
         Imagem = imagem;
@@ -25,6 +29,14 @@ public class Vacinas {
 
     public void setNome(String nome) {
         Nome = nome;
+    }
+
+    public String getUid() {
+        return Uid;
+    }
+
+    public void setUid(String uid) {
+        Uid = uid;
     }
 
     public String getDescricao() {
@@ -59,3 +71,4 @@ public class Vacinas {
         Video = video;
     }
 }
+

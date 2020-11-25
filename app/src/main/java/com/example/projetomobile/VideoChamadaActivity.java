@@ -77,9 +77,9 @@ public class VideoChamadaActivity extends AppCompatActivity
                        String  TipoUser = dataSnapshot.child(UserId).child("tipo").getValue().toString();
 
 
-                        if(dataSnapshot.child(UserId).hasChild("Tocando"))
+                        if(dataSnapshot.child(UserId).hasChild("Tocando")  && TipoUser.equals("doctor"))
                         {
-                            dr.child(UserId).child("Tocando").removeValue();
+                            //dr.child(UserId).child("Tocando").removeValue();
 
                             if(mPublisher != null)
                             {
@@ -91,12 +91,12 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoChamadaActivity.this, MainActivity.class));
+                            startActivity(new Intent(VideoChamadaActivity.this, MedicoActivy.class));
                             finish();
                         }
-                        if(dataSnapshot.child(UserId).hasChild("Ligando"))
+                        if(dataSnapshot.child(UserId).hasChild("Ligando")  && TipoUser.equals("user"))
                         {
-                            dr.child(UserId).child("Ligando").removeValue();
+                           // dr.child(UserId).child("Ligando").removeValue();
 
                             if(mPublisher != null)
                             {
@@ -108,7 +108,7 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 mSubscriber.destroy();
                             }
 
-                            startActivity(new Intent(VideoChamadaActivity.this, RecycleViewVacina.class));
+                            startActivity(new Intent(VideoChamadaActivity.this, RecycleView_Medicos.class));
                             finish();
                         }
                         else
@@ -130,10 +130,9 @@ public class VideoChamadaActivity extends AppCompatActivity
                                 startActivity(new Intent(VideoChamadaActivity.this, MedicoActivy.class));
                                 finish();
                             }
-
                             else if(TipoUser.equals("user"))
                             {
-                                startActivity(new Intent(VideoChamadaActivity.this, MainActivity.class));
+                                startActivity(new Intent(VideoChamadaActivity.this, RecycleView_Medicos.class));
                                 finish();
                             }
 

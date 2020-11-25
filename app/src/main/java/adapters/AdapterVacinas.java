@@ -1,10 +1,12 @@
 package adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.ImageView;
@@ -15,6 +17,7 @@ import android.widget.VideoView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.projetomobile.MarcarConsulta;
 import com.example.projetomobile.R;
 import com.squareup.picasso.Picasso;
 
@@ -44,13 +47,14 @@ public class AdapterVacinas extends RecyclerView.Adapter<AdapterVacinas.MyViewHo
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, final int position) {
 
         holder.Container.setAnimation(AnimationUtils.loadAnimation(context, R.anim.fade_scale_animation));
         holder.nome.setText(vacinas.get(position).getNome());
         holder.descricao.setText(vacinas.get(position).getDescricao());
         holder.indicacao.setText(vacinas.get(position).getIndicacao());
         Picasso.get().load(vacinas.get(position).getImagem()).into(holder.img);
+
     }
     @Override
     public int getItemCount() {

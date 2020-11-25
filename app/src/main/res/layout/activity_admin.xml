@@ -58,8 +58,9 @@
 
     <androidx.cardview.widget.CardView
 
-        android:layout_width="340dp"
+        android:id="@+id/cardView9"
 
+        android:layout_width="340dp"
         android:layout_height="121dp"
         app:cardCornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -117,5 +118,13 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="280dp" />
+
+    <Button
+        android:id="@+id/Ubs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cadastrar Vacina UBS"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
